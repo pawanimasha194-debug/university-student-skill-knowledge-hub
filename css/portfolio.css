@@ -1,0 +1,136 @@
+
+/* UniSkill Hub - Advanced Portfolio */
+
+.portfolio-section {
+  margin: 20px 0;
+  padding: 22px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  color: var(--text-main, #1e293b);
+}
+
+.portfolio-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.portfolio-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  color: var(--text-main, #1e293b);
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit, minmax(240px, 1fr)
+  );
+  gap: 16px;
+}
+
+.portfolio-card {
+  padding: 18px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.portfolio-card h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  color: var(--text-main, #1e293b);
+}
+
+.portfolio-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted, #64748b);
+  overflow-wrap: anywhere;
+}
+
+.portfolio-card a {
+  color: var(--primary-color, #0d9488);
+  overflow-wrap: anywhere;
+}
+
+.portfolio-form {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.portfolio-form input,
+.portfolio-form textarea,
+.portfolio-form select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: 8px;
+  background: var(--card-bg, #fff);
+  color: var(--text-main, #1e293b);
+  font: inherit;
+}
+
+.portfolio-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.portfolio-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.portfolio-empty {
+  color: var(--text-muted, #64748b);
+  font-size: 13px;
+  padding: 16px 0;
+}
+
+.portfolio-tag {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: rgba(37,99,235,.12);
+  color: var(--primary-color, #0d9488);
+  font-size: 11px;
+  margin: 3px 3px 3px 0;
+}
+
+html[data-theme="dark"] .portfolio-section,
+html[data-theme="dark"] .portfolio-card {
+  background: #16181c;
+  border-color: #343a43;
+  color: #e7e9ea;
+}
+
+html[data-theme="dark"] .portfolio-form input,
+html[data-theme="dark"] .portfolio-form textarea,
+html[data-theme="dark"] .portfolio-form select {
+  background: #222831;
+  color: #e7e9ea;
+  border-color: #414956;
+}
+
+@media (max-width: 600px) {
+  .portfolio-section {
+    padding: 15px;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+}

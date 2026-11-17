@@ -1,0 +1,1215 @@
+/* ==============================================================================
+   UniSkill Hub - Articles Module Styles
+   File: css/articles.css
+   Module: Member 3 – Knowledge Feed & Article Publishing
+   Description: Styles for article feed, article detail, create/edit forms, and
+   my-articles page. Continues the same LinkedIn-inspired design from Members 1 & 2.
+   ============================================================================== */
+
+/* ==============================================================================
+   Articles Page Layout (Two + Sidebar column for article pages)
+   ============================================================================== */
+
+/* Main wrapper for articles pages – same max-width as dashboard */
+.articles-wrapper {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 220px 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Two-column layout for detail page (wide main + right sidebar) */
+.articles-detail-wrapper {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Single column layout for create/edit pages */
+.articles-form-wrapper {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* My articles page – simple single max-width column */
+.my-articles-wrapper {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* ==============================================================================
+   Left Sidebar (Categories Filter)
+   ============================================================================== */
+.articles-left-sidebar {
+  /* Sticky so it stays visible while scrolling feed */
+  position: sticky;
+  top: 74px;
+}
+
+/* Category filter card */
+.category-filter-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.category-filter-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Individual category filter button */
+.category-filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.category-filter-btn:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+/* Active state for category filter */
+.category-filter-btn.active {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.category-filter-btn .cat-count {
+  font-size: 11px;
+  font-weight: 600;
+  background-color: #d9e7e3;
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+
+/* Quick links sidebar card – write article, my articles */
+.sidebar-quick-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.sidebar-quick-card h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+/* Quick action link inside sidebar card */
+.sidebar-action-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+  margin-bottom: 2px;
+}
+
+.sidebar-action-link:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.sidebar-action-link svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ==============================================================================
+   Articles Feed Center Column
+   ============================================================================== */
+.articles-center {
+  min-width: 0; /* prevent grid overflow */
+}
+
+/* Search + Filter Toolbar */
+.articles-toolbar {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Search input inside toolbar */
+.articles-search-box {
+  flex: 1;
+  min-width: 180px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.articles-search-box svg {
+  position: absolute;
+  left: 10px;
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.articles-search-box input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-main);
+  background-color: #f8f9fa;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.articles-search-box input:focus {
+  border-color: var(--primary-color);
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.15);
+}
+
+/* Sort/Filter dropdown select */
+.articles-sort-select {
+  padding: 7px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-main);
+  background-color: #f8f9fa;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.articles-sort-select:focus {
+  border-color: var(--primary-color);
+}
+
+/* Write Article button in toolbar */
+.write-article-btn {
+  flex-shrink: 0;
+}
+
+/* ==============================================================================
+   Article Feed Card (extends existing .feed-card from dashboard.css)
+   ============================================================================== */
+
+/* Re-declare feed card here so article pages work without dashboard.css */
+.feed-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  margin-bottom: 14px;
+  transition: box-shadow 0.2s ease;
+}
+
+.feed-card:hover {
+  box-shadow: var(--box-shadow-hover);
+}
+
+/* Card Header row: avatar + author info + category badge */
+.feed-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.feed-card-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background-color: #e0e0e0;
+}
+
+.feed-card-author-info {
+  flex: 1;
+}
+
+.feed-card-author-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.feed-card-author-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.feed-card-time {
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+/* Category badge on the right side of header */
+.feed-card-category {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 12px;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  letter-spacing: 0.4px;
+}
+
+/* Main content area of feed card */
+.feed-card-content {
+  margin-bottom: 12px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-main);
+}
+
+.feed-card-content p {
+  margin-bottom: 8px;
+}
+
+.feed-card-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Article excerpt text (truncated preview) */
+.article-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+/* Article title in feed card */
+.article-feed-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* Read more link on feed cards */
+.article-read-link {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-top: 6px;
+  text-decoration: none;
+}
+
+.article-read-link:hover {
+  text-decoration: underline;
+}
+
+/* Article thumbnail image in feed card */
+.article-feed-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+}
+
+/* Stats row: likes count + comments count */
+.feed-card-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-bottom: 4px;
+}
+
+/* Actions row: Like, Comment, Share buttons */
+.feed-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.feed-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+}
+
+.feed-action-btn:hover {
+  background-color: #f0f0f0;
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+/* Like button active/liked state */
+.feed-action-btn.like-btn.liked {
+  color: var(--primary-color);
+}
+
+.feed-action-btn.like-btn.liked svg {
+  fill: var(--primary-color);
+  stroke: var(--primary-color);
+}
+
+/* ==============================================================================
+   Right Sidebar (Trending, Top Authors widget)
+   ============================================================================== */
+.articles-right-sidebar {
+  position: sticky;
+  top: 74px;
+}
+
+/* Widget card (same style as dashboard widget-card) */
+.widget-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.widget-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Trending topics list */
+.trending-list {
+  list-style: none;
+}
+
+.trending-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.trending-list li:last-child {
+  border-bottom: none;
+}
+
+.trending-list li strong {
+  display: block;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Top authors list */
+.top-author-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.top-author-item:last-child {
+  border-bottom: none;
+}
+
+.top-author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background-color: #e0e0e0;
+}
+
+.top-author-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.top-author-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-author-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ==============================================================================
+   Article Detail Page Styles
+   ============================================================================== */
+
+/* Full article container card */
+.article-detail-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 28px;
+  margin-bottom: 16px;
+}
+
+/* Article title on detail page */
+.article-detail-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.35;
+  margin-bottom: 14px;
+}
+
+/* Article category badge on detail page */
+.article-detail-category {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 14px;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+/* Author info row on detail page */
+.article-detail-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.article-detail-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  background-color: #e0e0e0;
+}
+
+.article-detail-author-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.article-detail-author-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.article-detail-date {
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 2px;
+}
+
+/* Article banner image */
+.article-banner-image {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+}
+
+/* Full article content body */
+.article-body-content {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-main);
+  white-space: pre-wrap; /* preserve line breaks from textarea */
+}
+
+.article-body-content p {
+  margin-bottom: 14px;
+}
+
+/* Like + action buttons on detail page */
+.article-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+/* The like count display area on detail page */
+.article-like-count-display {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Edit/Delete action buttons (shown on own article detail) */
+.article-owner-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* ==============================================================================
+   Comment Section Styles
+   ============================================================================== */
+
+.comment-section-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.comment-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Comment input area */
+.comment-input-area {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.comment-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background-color: #e0e0e0;
+}
+
+.comment-textarea-wrap {
+  flex: 1;
+}
+
+.comment-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  min-height: 42px;
+  transition: border-color 0.2s, min-height 0.2s;
+  background-color: #f8f9fa;
+  line-height: 1.5;
+}
+
+.comment-textarea:focus {
+  border-color: var(--primary-color);
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(10,102,194,0.1);
+  min-height: 70px;
+  border-radius: 8px;
+}
+
+.comment-submit-btn {
+  margin-top: 6px;
+}
+
+/* Individual comment item */
+.comment-item {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-item-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background-color: #e0e0e0;
+}
+
+.comment-item-body {
+  flex: 1;
+}
+
+.comment-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-author-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.comment-item-time {
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+.comment-item-text {
+  font-size: 13.5px;
+  color: var(--text-main);
+  line-height: 1.55;
+}
+
+/* Empty comments state */
+.no-comments-msg {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-subtle);
+  font-size: 13px;
+}
+
+/* ==============================================================================
+   Create / Edit Article Form Styles
+   ============================================================================== */
+
+/* Form card container */
+.article-form-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 28px;
+}
+
+.article-form-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Form groups – same as Member 1 style */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.required {
+  color: var(--danger-color);
+  margin-left: 2px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 9px 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-main);
+  background-color: #fff;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(10,102,194,0.12);
+}
+
+/* Textarea form control for article content */
+.form-control.textarea-content {
+  min-height: 280px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* Select dropdown */
+select.form-control {
+  cursor: pointer;
+}
+
+/* File input styling */
+.file-input-wrap {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: border-color 0.2s;
+  background-color: #fafafa;
+}
+
+.file-input-wrap:hover {
+  border-color: var(--primary-color);
+}
+
+.file-input-wrap input[type="file"] {
+  display: none;
+}
+
+.file-input-label {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.file-input-hint {
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 4px;
+}
+
+/* Current image preview in edit form */
+.image-preview-wrap {
+  margin-top: 10px;
+  display: none; /* shown via JS */
+}
+
+.image-preview-wrap img {
+  max-height: 120px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+/* Form hint text */
+.form-hint {
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 4px;
+}
+
+/* Character counter */
+.char-counter {
+  font-size: 11.5px;
+  color: var(--text-subtle);
+  text-align: right;
+  margin-top: 3px;
+}
+
+/* Form button row at the bottom */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+/* ==============================================================================
+   Guidelines / Tips Sidebar Card (for create/edit pages)
+   ============================================================================== */
+
+.guidelines-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.guidelines-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.guideline-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+
+.guideline-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.guideline-text {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ==============================================================================
+   My Articles Page – Article Management Cards
+   ============================================================================== */
+
+/* Page header area */
+.my-articles-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.my-articles-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Individual article management card */
+.my-article-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.my-article-card:hover {
+  box-shadow: var(--box-shadow-hover);
+}
+
+.my-article-thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-article-thumbnail.no-image {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-size: 24px;
+}
+
+.my-article-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-article-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.my-article-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.my-article-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ==============================================================================
+   Empty State Box (no articles, no comments)
+   ============================================================================== */
+.empty-state-box {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.empty-state-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.empty-state-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+/* ==============================================================================
+   Alert / notification styles (re-declared so article pages work standalone)
+   ============================================================================== */
+.alert {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-success {
+  background-color: #def7ec;
+  color: #03543f;
+  border: 1px solid #bcf0da;
+}
+
+.alert-error {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+  border: 1px solid #f8b4b4;
+}
+
+.alert-info {
+  background-color: #e1effe;
+  color: #1e429f;
+  border: 1px solid #b4c6fc;
+}
+
+/* ==============================================================================
+   Skill Pill (re-declared for article pages that don't load profile.css)
+   ============================================================================== */
+.skill-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  background-color: #e6f7f3;
+  color: var(--primary-color);
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+/* ==============================================================================
+   Loading Spinner (same pattern as Member 2)
+   ============================================================================== */
+.spinner-wrapper {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==============================================================================
+   Breadcrumb Navigation (back arrow on detail page)
+   ============================================================================== */
+.breadcrumb-bar {
+  max-width: 1100px;
+  margin: 16px auto 0;
+  padding: 0 16px;
+}
+
+.breadcrumb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+/* ==============================================================================
+   Responsive Adjustments
+   ============================================================================== */
+@media (max-width: 1024px) {
+  .articles-wrapper {
+    grid-template-columns: 1fr 280px;
+  }
+
+  /* Hide left sidebar on smaller screens */
+  .articles-left-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .articles-wrapper,
+  .articles-detail-wrapper,
+  .articles-form-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .articles-right-sidebar,
+  .articles-left-sidebar {
+    display: none;
+  }
+
+  .articles-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .article-detail-card {
+    padding: 18px;
+  }
+
+  .article-detail-title {
+    font-size: 20px;
+  }
+
+  .my-article-card {
+    flex-direction: column;
+  }
+
+  .my-article-thumbnail {
+    width: 100%;
+    height: 100px;
+  }
+}

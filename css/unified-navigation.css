@@ -1,0 +1,9 @@
+/* UniSkillHub unified navigation — keeps every destination visible on all pages. */
+nav.nav-menu { display:flex; align-items:center; gap:1px; min-width:0; flex:1 1 auto; }
+nav.nav-menu > a.nav-item { flex:0 0 auto; min-width:0; padding:6px 5px; white-space:nowrap; font-size:11px; }
+nav.nav-menu > a.nav-item span { font-size:11px; }
+nav.nav-menu > a.nav-item svg { width:17px; height:17px; }
+nav.nav-menu > .nav-auth-buttons { flex:0 0 auto; margin-left:auto; }
+@media (max-width: 1450px) { nav.nav-menu { overflow-x:auto; scrollbar-width:thin; } nav.nav-menu > a.nav-item { padding-inline:5px; } }
+@media (max-width: 850px) { nav.nav-menu { overflow-x:auto; } nav.nav-menu > a.nav-item { min-width:54px; } }
+nav.nav-menu > a.nav-item.active { color:var(--primary-color,#0f766e); border-bottom:2px solid var(--primary-color,#0f766e); }

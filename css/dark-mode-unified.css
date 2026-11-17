@@ -1,0 +1,52 @@
+/* UniSkillHub — consistent teal dark mode; loaded LAST on every page. */
+html[data-theme="dark"] {
+  color-scheme:dark;
+  --bg-color:#0d1918;--bg-main:#0d1918;--background:#0d1918;
+  --card-bg:#162725;--surface:#162725;--surface-color:#162725;
+  --primary-color:#5eead4;--primary-hover:#99f6e4;--primary-light:#183b36;
+  --text-main:#e7f5f1;--text-color:#e7f5f1;--text-muted:#afc7c0;
+  --border-color:#2c4842;--input-bg:#1c3330;
+}
+html[data-theme="dark"],html[data-theme="dark"] body {background:#0d1918!important;color:#e7f5f1!important}
+html[data-theme="dark"] :is(main,.main-content,.page-wrapper,.content-wrapper,.dashboard-container,.resources-container,.resources-container-2col,.community-container,.community-detail-container,.skills-container,.admin-container,.auth-container,.articles-container,.profile-container,.portfolio-container,.layout-container){background-color:transparent!important;color:#e7f5f1}
+html[data-theme="dark"] :is(.navbar,.topbar,.top-bar,.site-header,.footer,.site-footer,.nav-container){background-color:#162725!important;color:#e7f5f1!important;border-color:#2c4842!important}
+/* Surface components only: avoid recoloring entire layout wrappers and media. */
+html[data-theme="dark"] :is(.card,.feed-card,.profile-card,.profile-section-card,.tutor-card,.tutor-profile-card,.leaderboard-card,.admin-table-card,.admin-login-card,.auth-card,.article-detail-card,.article-form-card,.my-article-card,.my-resource-item,.articles-left-sidebar,.articles-right-sidebar,.filter-sidebar-card,.community-nav-card,.community-space-card,.answers-section-card,.comment-section-card,.category-filter-card,.feature-card,.assignment-card,.guidelines-card,.details-card,.ask-prompt-card,.resource-card,.resource-item,.resource-sidebar,.sidebar-card,.stat-card,.stats-card,.widget,.widget-card,.panel,.modal-content,.dropdown-menu,.notification-item,.connection-item,.directory-search-box,.articles-search-box,.search-box,.table-wrapper,.admin-data-table,.chat-widget-container,.chat-list-view,.chat-active-header,.chat-contact-item,.content-box,.score-box,.stat-box,.bg-white,.white-bg,.bg-light,.empty-state-box,.contributor-item,.follow-item,.guideline-item,.answer-item,.comment-item,.composer-poll-box,.auth-switch-box){background-color:#162725!important;color:#e7f5f1!important;border-color:#2c4842!important}
+html[data-theme="dark"] :is(.card-header,.card-body,.card-footer,.feed-card-header,.feed-card-content,.feed-card-actions,.feed-card-stats,.assignment-card-header,.assignment-meta-footer,.auth-card-header,.details-header,.answers-header,.answer-header,.comment-item-body,.comment-item-header,.resource-header,.section-header,.page-header,.leaderboard-header,.tutoring-header,.header-banner,.page-title-container,.profile-header,.admin-header-bar){background-color:#162725!important;color:#e7f5f1!important;border-color:#2c4842!important}
+html[data-theme="dark"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea,select,.form-control,.search-input){background-color:#1c3330!important;color:#e7f5f1!important;border-color:#42615a!important}
+html[data-theme="dark"] :is(input,textarea)::placeholder{color:#a2bdb5!important;opacity:1}
+html[data-theme="dark"] :is(table,thead,tbody,tr,th,td){border-color:#2c4842!important;color:#e7f5f1}
+html[data-theme="dark"] :is(th,thead){background-color:#203a35!important}
+html[data-theme="dark"] :is(td,tbody tr){background-color:#162725!important}
+html[data-theme="dark"] :is(h1,h2,h3,h4,h5,h6,p,li,label,legend,dt,dd,.card-title,.section-title,.feed-card-author-name,.feed-card-content,.article-feed-title){color:#e7f5f1}
+html[data-theme="dark"] :is(.text-muted,.text-secondary,.muted,.subtitle,.feed-card-author-sub,.feed-card-time,.meta-text,.small-text){color:#afc7c0!important}
+html[data-theme="dark"] a:not(.btn):not(.button):not(.nav-item){color:#5eead4}
+html[data-theme="dark"] :is(.nav-item,.nav-link){color:#c6dcd5!important}
+html[data-theme="dark"] :is(.nav-item.active,.nav-item:hover,.nav-link.active,.nav-link:hover){color:#5eead4!important}
+html[data-theme="dark"] :is(.btn-primary,.primary-btn,button.primary,.upload-btn){background-color:#0f766e!important;color:#fff!important;border-color:#0f766e!important}
+html[data-theme="dark"] :is(.btn-secondary,.secondary-btn,.btn-outline,.filter-btn){background-color:#1c3330!important;color:#e7f5f1!important;border-color:#42615a!important}
+html[data-theme="dark"] :is(hr,.divider){border-color:#2c4842!important}
+html[data-theme="dark"] :is(.modal,.modal-backdrop){color:#e7f5f1}
+/* Keep imagery, avatars, charts, file badges and intentionally colorful banners intact. */
+html[data-theme="dark"] img,html[data-theme="dark"] video{background-color:transparent}
+
+/* v2: section-level surfaces previously left white on landing and content pages */
+html[data-theme="dark"] :is(.features-section,.why-section,.how-it-works-section,.testimonials-section,.cta-section,.about-section,.contact-section,.stats-section,.content-section,.section-container,.notifications-container,.articles-wrapper,.articles-detail-wrapper,.articles-form-wrapper,.my-articles-wrapper,.admin-login-wrapper,.portfolio-section,.chat-messages-area,.chat-input-area,.comment-input-area) {
+  background-color:#0d1918!important;
+  border-color:#2c4842!important;
+  color:#e7f5f1!important;
+}
+html[data-theme="dark"] :is(.features-section,.why-section,.how-it-works-section,.testimonials-section,.cta-section,.about-section,.contact-section,.stats-section) :is(.section-title,.section-subtitle,h1,h2,h3,p) {color:#e7f5f1!important;}
+html[data-theme="dark"] :is(.section-subtitle,.features-section .section-subtitle,.why-section .section-subtitle){color:#afc7c0!important;}
+html[data-theme="dark"] :is(.feature-card,.feature-card:hover,.step-card,.testimonial-card,.how-card,.course-card,.team-card,.student-card,.article-card,.post-card,.discussion-card,.resource-navigation,.top-contributors,.filter-panel,.sidebar-panel,.form-card,.info-card,.notification-card,.message-card,.chat-message,.portfolio-card,.portfolio-item,.profile-info,.modal-dialog,.dropdown-content) {
+  background-color:#162725!important;
+  border-color:#2c4842!important;
+  color:#e7f5f1!important;
+}
+html[data-theme="dark"] :is(.feature-card,.step-card,.testimonial-card,.how-card,.course-card,.team-card,.student-card,.article-card,.post-card,.discussion-card,.resource-navigation,.top-contributors,.filter-panel,.sidebar-panel,.form-card,.info-card,.notification-card,.message-card,.portfolio-card) :is(h1,h2,h3,h4,p,span:not(.badge):not(.tag)) {color:#e7f5f1;}
+html[data-theme="dark"] :is(.feature-icon-wrapper,.icon-wrapper){background-color:#183b36!important;color:#5eead4!important;}
+/* Override hard-coded inline white backgrounds only; do not touch colorful banners or media. */
+html[data-theme="dark"] :is(div,section,article,aside,header,footer)[style*="background: white"],
+html[data-theme="dark"] :is(div,section,article,aside,header,footer)[style*="background-color: white"],
+html[data-theme="dark"] :is(div,section,article,aside,header,footer)[style*="background: #fff"],
+html[data-theme="dark"] :is(div,section,article,aside,header,footer)[style*="background-color: #fff"] {background-color:#162725!important;color:#e7f5f1!important;}

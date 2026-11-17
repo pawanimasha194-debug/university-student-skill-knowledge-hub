@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join UniSkill Hub – Student Registration</title>
+  <meta name="description" content="Sign up for UniSkill Hub to create your academic profile and share skills with peers.">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+  
+  <!-- Supabase JS Client v2 from Official CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/dark-mode.css">  <link rel="stylesheet" href="css/teal-theme.css">
+<link rel="stylesheet" href="css/dark-mode-unified.css">
+</head>
+<body class="auth-page">
+
+  <!-- Top Logo Bar -->
+  <header class="auth-header">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-badge">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </span>
+      <span class="logo-text">UniSkill<span>Hub</span></span>
+    </a>
+  </header>
+
+  <!-- Main Centered Registration Card -->
+  <main class="auth-container">
+    <div class="auth-card auth-card-wide">
+      
+      <div class="auth-card-header">
+        <h1 class="auth-card-title">Make the most of your student life</h1>
+        <p class="auth-card-subtitle">Join your university peer network and share your skills.</p>
+      </div>
+
+      <!-- Feedback Alert Box -->
+      <div id="alertBox" class="alert" style="display: none;" role="alert"></div>
+
+      <!-- Registration Form -->
+      <form id="registerForm" class="auth-form" novalidate>
+        
+        <!-- Field 1: Full Name -->
+        <div class="form-group">
+          <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="fullName" 
+            class="form-control" 
+            placeholder="e.g. Saman Perera" 
+            required
+            autocomplete="name"
+          >
+        </div>
+
+        <!-- Field 2: University Email -->
+        <div class="form-group">
+          <label for="email" class="form-label">University Email <span class="required">*</span></label>
+          <input 
+            type="email" 
+            id="email" 
+            class="form-control" 
+            placeholder="e.g. saman@university.ac.lk" 
+            required
+            autocomplete="email"
+          >
+          <span class="form-hint">Used for student verification and profile login.</span>
+        </div>
+
+        <!-- Fields 3 & 4: Faculty and Degree Program (2 Columns) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="faculty" class="form-label">Faculty <span class="required">*</span></label>
+            <select id="faculty" class="form-control" required>
+              <option value="" disabled selected>Select your Faculty</option>
+              <option value="Faculty of Science">Faculty of Science</option>
+              <option value="Faculty of Applied Sciences">Faculty of Applied Sciences</option>
+              <option value="Faculty of Computing & Technology">Faculty of Computing & Technology</option>
+              <option value="Faculty of Engineering">Faculty of Engineering</option>
+              <option value="Faculty of Management Studies">Faculty of Management Studies</option>
+              <option value="Faculty of Humanities & Social Sciences">Faculty of Humanities & Social Sciences</option>
+              <option value="Faculty of Medicine">Faculty of Medicine</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="degree" class="form-label">Degree Program <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="degree" 
+              class="form-control" 
+              placeholder="e.g. BSc Applied Sciences" 
+              required
+            >
+          </div>
+        </div>
+
+        <!-- Field 5: Academic Year & Skills (2 Columns) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="academicYear" class="form-label">Academic Year <span class="required">*</span></label>
+            <select id="academicYear" class="form-control" required>
+              <option value="" disabled selected>Select Year</option>
+              <option value="1st Year">1st Year </option>
+              <option value="2nd Year">2nd Year </option>
+              <option value="3rd Year">3rd Year </option>
+              <option value="4th Year">4th Year </option>
+              <option value="Postgraduate">Postgraduate</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="skills" class="form-label">Top Skills (Comma-separated)</label>
+            <input 
+              type="text" 
+              id="skills" 
+              class="form-control" 
+              placeholder="e.g. Java, Statistics, Web Dev"
+            >
+          </div>
+        </div>
+
+        <!-- Fields 6 & 7: Password & Confirm Password (2 Columns) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password" class="form-label">Password <span class="required">*</span></label>
+            <div class="password-field-wrapper">
+              <input 
+                type="password" 
+                id="password" 
+                class="form-control" 
+                placeholder="6+ characters" 
+                required
+                autocomplete="new-password"
+              >
+              <button type="button" id="togglePassword" class="password-toggle-btn">Show</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm Password <span class="required">*</span></label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              class="form-control" 
+              placeholder="Re-type password" 
+              required
+              autocomplete="new-password"
+            >
+          </div>
+        </div>
+
+        <p class="student-agreement-text">
+          By clicking Join Now, you agree to the UniSkill Hub Student Honor Code and collaborative guidelines.
+        </p>
+
+        <!-- Submit Button -->
+        <button type="submit" id="registerSubmitBtn" class="btn btn-primary auth-submit-btn">
+          <span id="registerBtnSpinner" class="spinner" style="display: none;"></span>
+          <span id="registerBtnText">Join Now</span>
+        </button>
+
+      </form>
+
+      <!-- Switch to Login Link -->
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <div class="auth-switch-box">
+        Already on UniSkill Hub? <a href="login.html">Sign in</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- JavaScript Files -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/register.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const active = localStorage.getItem('uniskill_active_session');
+      if (active) {
+        try {
+          const parsed = JSON.parse(active);
+          const name = parsed.profile?.full_name || parsed.user?.user_metadata?.full_name;
+          if (name) {
+            const alertBox = document.getElementById('alertBox');
+            if (alertBox) {
+              alertBox.style.display = 'block';
+              alertBox.className = 'alert alert-info';
+              alertBox.innerHTML = `You are currently logged in as <strong>${name}</strong>. <a href="index.html" style="font-weight: 700; margin-left: 6px;">Go to Home Page &rarr;</a>`;
+            }
+          }
+        } catch (e) {}
+      }
+    });
+  </script>
+<script src="js/theme.js"></script></body>
+</html>

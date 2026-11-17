@@ -1,0 +1,647 @@
+/* ============================================================
+   UniSkill Hub - FINAL ULTIMATE Dark Mode Theme (Covers Everything)
+   ============================================================ */
+
+[data-theme="dark"] {
+  --bg-main: #000000;
+  --card-bg: #16181c;
+  --text-main: #e7e9ea;
+  --text-muted: #71767b;
+  --border-color: #2f3336;
+  --primary-color: #2dd4bf; 
+  --primary-light: #1d2a3a; 
+}
+
+/* 1. GLOBAL OVERRIDES */
+[data-theme="dark"] body { background: var(--bg-main); color: var(--text-main); }
+
+/* 2. NAVBAR & FOOTER */
+[data-theme="dark"] .navbar {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+[data-theme="dark"] .nav-item span, [data-theme="dark"] .nav-item svg {
+  color: var(--text-main) !important; fill: var(--text-main) !important;
+}
+[data-theme="dark"] .footer {
+  background-color: #000 !important;
+  border-top: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+[data-theme="dark"] .footer-links a { color: var(--text-muted) !important; }
+
+/* 3. ALL HEADERS/BANNERS (Leaderboard, Tutoring, etc.) */
+[data-theme="dark"] .page-header,
+[data-theme="dark"] .leaderboard-header,
+[data-theme="dark"] .tutoring-header,
+[data-theme="dark"] .banner,
+[data-theme="dark"] .section-header,
+[data-theme="dark"] .title-section,
+[data-theme="dark"] .header-banner,
+[data-theme="dark"] .page-title-container {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .page-header h1, [data-theme="dark"] .page-header p,
+[data-theme="dark"] .leaderboard-header h1, [data-theme="dark"] .leaderboard-header p,
+[data-theme="dark"] .tutoring-header h1, [data-theme="dark"] .tutoring-header p,
+[data-theme="dark"] .header-banner h1, [data-theme="dark"] .header-banner p {
+  color: var(--text-main) !important;
+}
+
+/* 4. ALL CARDS & CONTAINERS (Catches everything) */
+[data-theme="dark"] .card,
+[data-theme="dark"] .feed-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .admin-table-card,
+[data-theme="dark"] .notifications-card,
+[data-theme="dark"] .leaderboard-card,
+[data-theme="dark"] .profile-section-card,
+[data-theme="dark"] .reputation-widget,
+[data-theme="dark"] .tutor-card,
+[data-theme="dark"] .tutor-profile-card,
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-light,
+[data-theme="dark"] .white-bg,
+[data-theme="dark"] .content-box,
+[data-theme="dark"] .score-box,
+[data-theme="dark"] .stat-box,
+[data-theme="dark"] .card-body,
+[data-theme="dark"] .card-header {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: none !important;
+}
+
+/* Do not force every div/span to white: light panels need dark text. */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5 {
+  color: var(--text-main);
+}
+
+/* 5. TABLES (Leaderboard, Admin, Reports) */
+[data-theme="dark"] table,
+[data-theme="dark"] .table-responsive,
+[data-theme="dark"] .admin-data-table {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] th {
+  background-color: #202327 !important;
+  color: var(--text-muted) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+[data-theme="dark"] td {
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  background-color: transparent !important;
+}
+[data-theme="dark"] tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* 6. BADGES & PILLS */
+[data-theme="dark"] .skill-pill,
+[data-theme="dark"] .subject-tag,
+[data-theme="dark"] .badge,
+[data-theme="dark"] .badge-light,
+[data-theme="dark"] .rating-badge {
+  background-color: #202327 !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* 7. BUTTONS & INPUTS */
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+  background-color: #000000 !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .btn-outline,
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .view-profile-btn {
+  background-color: #202327 !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .btn-outline:hover,
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: var(--primary-light) !important;
+  color: var(--primary-color) !important;
+}
+
+/* 8. HOVER EFFECTS & MODALS */
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .chat-window,
+[data-theme="dark"] .admin-login-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .chat-bubble.incoming {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+}
+
+/* 9. THEME TOGGLE BUTTON */
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-main);
+  margin-right: 12px;
+}
+.theme-toggle-btn:hover { background: var(--primary-light); border-color: var(--primary-color); }
+
+/* ===== UNISKILLHUB DARK MODE FIX ===== */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-main: #090b0f;
+  --card-bg: #16181c;
+  --text-main: #e7e9ea;
+  --text-muted: #b7c0cd;
+  --border-color: #343a43;
+  --primary-color: #2dd4bf;
+  --primary-light: #1d2a3a;
+
+  --bg-color: #090b0f;
+  --background-color: #090b0f;
+  --surface-color: #16181c;
+  --text-color: #e7e9ea;
+}
+
+/* Main background */
+[data-theme="dark"] body {
+  background: #090b0f !important;
+  color: #e7e9ea !important;
+}
+
+/* Page headers and banners */
+[data-theme="dark"] .page-banner,
+[data-theme="dark"] .page-header,
+[data-theme="dark"] .leaderboard-header,
+[data-theme="dark"] .tutoring-header,
+[data-theme="dark"] .header-banner,
+[data-theme="dark"] .page-title-container {
+  background: #16181c !important;
+  color: #e7e9ea !important;
+  border-color: #343a43 !important;
+}
+
+/* Header text */
+[data-theme="dark"] .page-banner h1,
+[data-theme="dark"] .page-banner h2,
+[data-theme="dark"] .page-banner strong,
+[data-theme="dark"] .page-header h1,
+[data-theme="dark"] .leaderboard-header h1,
+[data-theme="dark"] .tutoring-header h1 {
+  color: #e7e9ea !important;
+}
+
+/* Header descriptions */
+[data-theme="dark"] .page-banner p,
+[data-theme="dark"] .page-header p,
+[data-theme="dark"] .leaderboard-header p,
+[data-theme="dark"] .tutoring-header p {
+  color: #b7c0cd !important;
+}
+
+/* Cards, panels and filters */
+[data-theme="dark"] .leaderboard-table-card,
+[data-theme="dark"] .leaderboard-row,
+[data-theme="dark"] .tutor-filters,
+[data-theme="dark"] .tutor-card,
+[data-theme="dark"] .filter-panel,
+[data-theme="dark"] .filters-bar,
+[data-theme="dark"] .resource-card,
+[data-theme="dark"] .article-card,
+[data-theme="dark"] .assignment-card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .modal-content {
+  background-color: #16181c !important;
+  color: #e7e9ea !important;
+  border-color: #343a43 !important;
+}
+
+/* Tables */
+[data-theme="dark"] table {
+  background-color: #16181c !important;
+  color: #e7e9ea !important;
+}
+
+[data-theme="dark"] th {
+  background-color: #222831 !important;
+  color: #b7c0cd !important;
+}
+
+[data-theme="dark"] td {
+  color: #e7e9ea !important;
+  border-color: #343a43 !important;
+}
+
+[data-theme="dark"] tr:hover td {
+  background-color: #222831 !important;
+}
+
+/* Form fields */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: #101419 !important;
+  color: #e7e9ea !important;
+  border-color: #343a43 !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #a8b3c2 !important;
+  opacity: 1;
+}
+
+[data-theme="dark"] select option {
+  background-color: #16181c;
+  color: #e7e9ea;
+}
+
+/* Buttons */
+[data-theme="dark"] .btn-primary {
+  background-color: #168ce0 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-outline,
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .view-profile-btn {
+  background-color: #222831 !important;
+  color: #e7e9ea !important;
+  border-color: #343a43 !important;
+}
+
+/* Secondary text */
+[data-theme="dark"] .text-muted {
+  color: #a8b3c2 !important;
+}
+
+/* Card hover */
+[data-theme="dark"] .tutor-card:hover,
+[data-theme="dark"] .leaderboard-row:hover {
+  background-color: #222831 !important;
+}
+
+/* ============================================================
+   Cross-page contrast corrections: keep surfaces and text paired
+   ============================================================ */
+[data-theme="dark"] {
+  --text-subtle: #a8b3c2;
+  --primary-hover: #64baff;
+}
+
+/* Containers that use fixed light inline backgrounds in HTML. */
+[data-theme="dark"] :is(
+  .dashboard-center, .dashboard-right, .dashboard-left,
+  .articles-wrapper, .resources-container, .community-container,
+  .skills-container, .pulse-layout, .admin-container
+) [style*="background: #f"],
+[data-theme="dark"] :is(
+  .dashboard-center, .dashboard-right, .dashboard-left,
+  .articles-wrapper, .resources-container, .community-container,
+  .skills-container, .pulse-layout, .admin-container
+) [style*="background-color: #f"],
+[data-theme="dark"] :is(
+  .dashboard-center, .dashboard-right, .dashboard-left,
+  .articles-wrapper, .resources-container, .community-container,
+  .skills-container, .pulse-layout, .admin-container
+) [style*="background: #e"] {
+  background: #202833 !important;
+  color: #e7e9ea !important;
+  border-color: #384658 !important;
+}
+
+/* Text on the converted panels, including inline text colors. */
+[data-theme="dark"] :is(
+  #dashTodaySchedule, .welcome-feed-card, .reputation-widget,
+  .dashboard-center > .card, .dashboard-right .widget-card,
+  .academic-badges-wrap
+) :is(h1,h2,h3,h4,p,span,strong,div) {
+  color: inherit;
+}
+
+[data-theme="dark"] .welcome-feed-card {
+  background: #172638 !important;
+  border-color: #38506b !important;
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] .welcome-feed-title,
+[data-theme="dark"] .welcome-feed-title span,
+[data-theme="dark"] .welcome-feed-desc {
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] #dashTodaySchedule,
+[data-theme="dark"] #dashTodaySchedule > div {
+  background: #202833 !important;
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] #dashTodaySchedule :is(strong,span,div) {
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] .dashboard-center > .card[style*="linear-gradient"] {
+  background: #16181c !important;
+}
+[data-theme="dark"] .dashboard-center > .card[style*="linear-gradient"] > div > h3 {
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] .dashboard-center > .card[style*="linear-gradient"] [style*="background: #ffffff"] {
+  background: #202833 !important;
+  color: #e7e9ea !important;
+  border-color: #384658 !important;
+}
+[data-theme="dark"] .dashboard-center > .card[style*="linear-gradient"] [style*="background: #ffffff"] :is(div,span,strong) {
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] .dashboard-right .widget-card [style*="background: #fff5f5"] {
+  background: #29212a !important;
+  color: #e7e9ea !important;
+  border-color: #704354 !important;
+}
+[data-theme="dark"] .dashboard-right .widget-card [style*="background: #fff5f5"] :is(div,span,strong) {
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] .academic-badge,
+[data-theme="dark"] .academic-badge.top-tutor,
+[data-theme="dark"] .academic-badge.mentor,
+[data-theme="dark"] .academic-badge.knowledge-sharer,
+[data-theme="dark"] .academic-badge.problem-solver {
+  background: #243247 !important;
+  color: #e7e9ea !important;
+  border-color: #52657f !important;
+}
+[data-theme="dark"] .reputation-widget a[style*="background: #fef08a"] {
+  color: #713f12 !important;
+}
+[data-theme="dark"] .chat-window,
+[data-theme="dark"] .chat-active-view,
+[data-theme="dark"] .chat-active-header {
+  background: #16181c !important;
+  color: #e7e9ea !important;
+}
+[data-theme="dark"] .chat-contact-name,
+[data-theme="dark"] .chat-contact-status {
+  color: #e7e9ea !important;
+}
+
+/* =========================================
+   UNISKILL HUB - DARK MODE CONTRAST FIX
+   Home, Dashboard and other pages
+   ========================================= */
+
+html[data-theme="dark"] {
+    --text-main: #f1f5f9;
+    --text-muted: #cbd5e1;
+    --text-subtle: #94a3b8;
+    --card-bg: #16181c;
+    --border-color: #30363d;
+}
+
+/* Home page: feature cards */
+html[data-theme="dark"] .feature-card,
+html[data-theme="dark"] .features-grid > div,
+html[data-theme="dark"] .feature-box {
+    background-color: #1b222c !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .feature-card h2,
+html[data-theme="dark"] .feature-card h3,
+html[data-theme="dark"] .feature-card h4,
+html[data-theme="dark"] .feature-card p,
+html[data-theme="dark"] .features-grid > div h3,
+html[data-theme="dark"] .features-grid > div p,
+html[data-theme="dark"] .feature-box h3,
+html[data-theme="dark"] .feature-box p {
+    color: #e2e8f0 !important;
+}
+
+/* Dashboard: welcome banner */
+html[data-theme="dark"] .welcome-feed-card {
+    background: #1b2636 !important;
+    border: 1px solid #334155 !important;
+}
+
+html[data-theme="dark"] .welcome-feed-title {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .welcome-feed-desc {
+    color: #cbd5e1 !important;
+}
+
+/* Dashboard: schedule */
+html[data-theme="dark"] #dashTodaySchedule {
+    background: #202b3b !important;
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] #dashTodaySchedule div,
+html[data-theme="dark"] #dashTodaySchedule strong {
+    color: #f1f5f9 !important;
+}
+
+/* Dashboard: recommendation cards */
+html[data-theme="dark"] .dashboard-center > .card {
+    background: #171d27 !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .dashboard-center > .card h3 {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .dashboard-center > .card
+div[style*="background: #ffffff"] {
+    background: #222d3d !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .dashboard-center > .card
+div[style*="background: #ffffff"] div {
+    color: #e2e8f0 !important;
+}
+
+/* Dashboard: team project card */
+html[data-theme="dark"] .widget-card
+div[style*="background: #fff5f5"] {
+    background: #24202a !important;
+    border-color: #6b3945 !important;
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .widget-card
+div[style*="background: #fff5f5"] div {
+    color: #e2e8f0 !important;
+}
+
+/* Academic badges */
+html[data-theme="dark"] .academic-badge {
+    background: #243247 !important;
+    color: #f1f5f9 !important;
+    border-color: #475569 !important;
+}
+
+/* Forms and input fields */
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border-color: #475569;
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #94a3b8;
+}
+
+/* Links and buttons */
+html[data-theme="dark"] a:not(.btn) {
+    text-decoration-color: currentColor;
+}
+
+html[data-theme="dark"] .btn-primary {
+    background-color: #1689e8;
+    color: #ffffff !important;
+}
+
+/* Accessible focus indicator */
+html[data-theme="dark"] :focus-visible {
+    outline: 2px solid #5eead4;
+    outline-offset: 2px;
+}
+
+/* ==========================================
+   UNISKILL HUB - CAMPUS PULSE DARK MODE FIX
+   File: css/dark-mode.css
+   ========================================== */
+
+/* Main Campus Pulse panel */
+html[data-theme="dark"] .pulse-center {
+    background-color: #16181c !important;
+    border-color: #30363d !important;
+    color: #f1f5f9 !important;
+}
+
+/* Campus Pulse heading */
+html[data-theme="dark"] .pulse-header {
+    background-color: #1e293b !important;
+    border-bottom: 1px solid #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .pulse-header h1,
+html[data-theme="dark"] .pulse-header h2,
+html[data-theme="dark"] .pulse-header h3,
+html[data-theme="dark"] .pulse-header span {
+    color: #f8fafc !important;
+}
+
+/* Create post area */
+html[data-theme="dark"] .pulse-compose,
+html[data-theme="dark"] .pulse-compose-card,
+html[data-theme="dark"] .pulse-post-composer {
+    background-color: #16181c !important;
+    color: #f1f5f9 !important;
+}
+
+/* Posts */
+html[data-theme="dark"] .pulse-post,
+html[data-theme="dark"] .pulse-post-card,
+html[data-theme="dark"] .feed-post {
+    background-color: #16181c !important;
+    border-color: #30363d !important;
+    color: #f1f5f9 !important;
+}
+
+/* Light resource attachment cards */
+html[data-theme="dark"] .pulse-center .resource-card,
+html[data-theme="dark"] .pulse-center .resource-attachment,
+html[data-theme="dark"] .pulse-center .post-attachment,
+html[data-theme="dark"] .pulse-center .attachment-card {
+    background-color: #202b3b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .pulse-center .resource-card *,
+html[data-theme="dark"] .pulse-center .resource-attachment *,
+html[data-theme="dark"] .pulse-center .post-attachment *,
+html[data-theme="dark"] .pulse-center .attachment-card * {
+    color: #e2e8f0 !important;
+}
+
+/* Pulse search box */
+html[data-theme="dark"] .pulse-search,
+html[data-theme="dark"] .pulse-search-box,
+html[data-theme="dark"] .pulse-search input,
+html[data-theme="dark"] .pulse-search-box input {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .pulse-search input::placeholder,
+html[data-theme="dark"] .pulse-search-box input::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Sidebar cards */
+html[data-theme="dark"] .pulse-right .card,
+html[data-theme="dark"] .pulse-right .widget-card {
+    background-color: #16181c !important;
+    border-color: #30363d !important;
+    color: #f1f5f9 !important;
+}
+
+/* Keep primary action buttons readable */
+html[data-theme="dark"] .pulse-compose-fab,
+html[data-theme="dark"] .pulse-post-btn {
+    background-color: #2dd4bf !important;
+    color: #ffffff !important;
+}
+
+/* Muted post metadata */
+html[data-theme="dark"] .pulse-post-time,
+html[data-theme="dark"] .pulse-post-meta {
+    color: #94a3b8 !important;
+}
+/* Navbar logo dark mode correction */
+
+html[data-theme="dark"] .nav-logo {
+    color: #38bdf8 !important;
+}
+
+html[data-theme="dark"] .nav-logo .logo-text,
+html[data-theme="dark"] .nav-logo .logo-text span {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .nav-search input {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+}
+
+html[data-theme="dark"] .nav-search input::placeholder {
+    color: #94a3b8 !important;
+}

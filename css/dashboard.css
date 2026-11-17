@@ -1,0 +1,623 @@
+/* ==============================================================================
+   UniSkill Hub - Dashboard Stylesheet (dashboard.css)
+   Layout: 3-Column LinkedIn-Inspired Student Network Layout
+   ============================================================================== */
+
+/* Main Dashboard Container */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 20px auto 40px;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 310px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ==============================================================================
+   Left Column: Profile Summary & Student Links
+   ============================================================================== */
+.dashboard-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Profile Summary Card */
+.user-summary-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.user-summary-banner {
+  height: 56px;
+  background: linear-gradient(120deg, #0f766e 0%, #115e59 100%);
+}
+
+.user-summary-avatar-wrap {
+  margin-top: -32px;
+  display: inline-block;
+  position: relative;
+}
+
+.user-summary-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  background-color: #f0f0f0;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-summary-info {
+  padding: 10px 16px 16px;
+}
+
+.user-summary-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.user-summary-faculty {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.user-summary-degree {
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 2px;
+}
+
+.user-summary-year {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary-color);
+  background-color: var(--primary-light);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Stats Row */
+.user-summary-stats {
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.stat-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* Skills list inside summary */
+.user-summary-skills {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.user-summary-skills h4 {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.user-summary-actions {
+  padding: 0 16px 14px;
+}
+
+/* Left Sidebar Navigation Card */
+.sidebar-links-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 12px 0;
+}
+
+.sidebar-link-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+  text-decoration: none;
+}
+
+.sidebar-link-item:hover {
+  background-color: #f4f8f7;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.sidebar-link-item svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+/* ==============================================================================
+   Middle Column: Welcome Feed & Posts
+   ============================================================================== */
+.dashboard-center {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Welcome Announcement Card */
+.welcome-feed-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+  border: 1px solid #c9e0fa;
+  border-radius: var(--border-radius);
+  padding: 18px 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.welcome-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.welcome-feed-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.welcome-feed-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Post Creator Box */
+.post-creator-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 14px 16px;
+  box-shadow: var(--box-shadow);
+}
+
+.post-creator-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.post-creator-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.post-creator-input {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #bfbfbf;
+  border-radius: 24px;
+  padding: 11px 16px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.post-creator-input:hover,
+.post-creator-input:focus {
+  background-color: #f7f9fa;
+  border-color: var(--primary-color);
+}
+
+.post-creator-buttons {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 8px;
+}
+
+.creator-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.creator-btn:hover {
+  background-color: #f4f8f7;
+}
+
+.creator-btn.resource svg { color: #378fe9; }
+.creator-btn.article svg { color: #e7a33e; }
+.creator-btn.skill svg { color: #5f9b41; }
+
+/* Feed Filter Tabs */
+.feed-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.feed-filter-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-tab {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+
+.filter-tab.active {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+/* Feed Cards (Activities / Resources / Articles) */
+.feed-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.feed-card-header {
+  padding: 14px 16px 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.feed-card-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.feed-card-author-info {
+  flex: 1;
+}
+
+.feed-card-author-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.feed-card-author-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.feed-card-time {
+  font-size: 11px;
+  color: var(--text-subtle);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.feed-card-category {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.feed-card-content {
+  padding: 6px 16px 14px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.feed-card-content p {
+  margin-bottom: 10px;
+}
+
+/* Shared Resource Preview Box inside card */
+.resource-box {
+  background-color: #fafbfc;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+  text-decoration: none;
+}
+
+.resource-box:hover {
+  background-color: #f0f7ff;
+  border-color: #99f6e4;
+  text-decoration: none;
+}
+
+.resource-icon {
+  width: 36px;
+  height: 36px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.resource-details {
+  flex: 1;
+}
+
+.resource-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.resource-meta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* Feed Card Footer / Actions */
+.feed-card-stats {
+  padding: 6px 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--text-subtle);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.feed-card-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 4px 8px;
+}
+
+.feed-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.feed-action-btn:hover {
+  background-color: #f4f8f7;
+  color: var(--text-main);
+}
+
+.feed-action-btn.liked {
+  color: var(--primary-color);
+}
+
+/* ==============================================================================
+   Right Column: Quick Links, Popular Skills, Top Contributors & Suggested
+   ============================================================================== */
+.dashboard-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.widget-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+}
+
+.widget-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Popular Skills Tag Cloud */
+.skills-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-cloud-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f4f8f7;
+  color: var(--text-main);
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: 1px solid #e6e6e6;
+}
+
+.skill-cloud-item:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-color: #99f6e4;
+  text-decoration: none;
+}
+
+/* Quick Links list */
+.quick-link-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quick-link-item a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 6px 4px;
+  border-radius: 4px;
+}
+
+.quick-link-item a:hover {
+  color: var(--primary-color);
+  background-color: #f4f8f7;
+  text-decoration: none;
+}
+
+/* Top Contributors */
+.contributor-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.contributor-item:last-child {
+  border-bottom: none;
+}
+
+.contributor-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.contributor-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.contributor-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contributor-badge {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.contributor-points {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-color);
+  background: var(--primary-light);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+/* Responsive Dashboard Layout */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 240px 1fr;
+  }
+  .dashboard-right {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    margin-top: 10px;
+  }
+  .dashboard-right {
+    grid-column: span 1;
+    grid-template-columns: 1fr;
+  }
+  .post-creator-buttons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}

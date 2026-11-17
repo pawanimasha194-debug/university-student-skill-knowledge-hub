@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Learning Resources – UniSkill Hub</title>
+<meta content="Discover, download, and share academic lecture notes, summaries, and exam resources with university peers." name="description"/>
+<!-- CSS Stylesheets -->
+<link href="../css/style.css" rel="stylesheet"/>
+<link href="../css/profile.css" rel="stylesheet"/>
+<link href="../css/resources.css" rel="stylesheet"/>
+<link href="../css/dark-mode.css" rel="stylesheet"/>
+<!-- Supabase JS Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    /* Resources Dark Mode */
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --text-main: #e7e9ea;
+      --text-muted: #b7c0cd;
+      --border-color: #343a43;
+    }
+
+    html[data-theme="dark"] body {
+      background: #090b0f !important;
+      color: #e7e9ea !important;
+    }
+
+    html[data-theme="dark"] .navbar,
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .resources-toolbar,
+    html[data-theme="dark"] .resource-card,
+    html[data-theme="dark"] .footer {
+      background: #16181c !important;
+      color: #e7e9ea !important;
+      border-color: #343a43 !important;
+    }
+
+    html[data-theme="dark"] .card h3,
+    html[data-theme="dark"] .card h4,
+    html[data-theme="dark"] .toolbar-title,
+    html[data-theme="dark"] .contributor-name {
+      color: #e7e9ea !important;
+    }
+
+    html[data-theme="dark"] .card p,
+    html[data-theme="dark"] .contributor-badge {
+      color: #b7c0cd !important;
+    }
+
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] select,
+    html[data-theme="dark"] .resource-search-box,
+    html[data-theme="dark"] .filter-badge-btn {
+      background: #222831 !important;
+      color: #e7e9ea !important;
+      border-color: #414956 !important;
+    }
+
+    html[data-theme="dark"] input::placeholder {
+      color: #a8b3c2 !important;
+    }
+
+    html[data-theme="dark"] .nav-item {
+      color: #e7e9ea !important;
+    }
+
+    html[data-theme="dark"] .nav-item:hover,
+    html[data-theme="dark"] .nav-item.active {
+      color: #1d9bf0 !important;
+    }
+
+    html[data-theme="dark"] .sidebar-link-item {
+      color: #e7e9ea;
+    }
+
+    html[data-theme="dark"] .contributor-item {
+      border-color: #343a43;
+    }
+
+    html[data-theme="dark"] .theme-toggle-btn {
+      color: #e7e9ea !important;
+      border-color: #414956 !important;
+    }
+  </style>
+<link href="../css/teal-theme.css" rel="stylesheet"/>
+<link href="../css/unified-navigation.css" rel="stylesheet"/><link rel="stylesheet" href="../css/dark-mode-unified.css">
+<link rel="stylesheet" href="../css/simple-modern.css"/>
+</head>
+<body>
+<!-- Navigation Bar -->
+<header class="navbar">
+<div class="nav-container">
+<!-- Logo -->
+<a class="nav-logo" href="../index.html" title="UniSkill Hub Home">
+<span class="logo-badge">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20">
+<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"></path>
+</svg>
+</span>
+<span class="logo-text">UniSkill<span>Hub</span></span>
+</a>
+<!-- Search -->
+<div class="nav-search">
+<svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<input aria-label="Search" id="globalNavSearch" placeholder="Search students, skills, resources..." type="text"/>
+</div>
+<!-- Navigation Links -->
+<nav class="nav-menu"><a class="nav-item" href="../index.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></a><a class="nav-item" href="../dashboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg><span>Dashboard</span></a><a class="nav-item" href="../feed.html" title="Campus Pulse"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 3h18v14H7l-4 4V3zm4 5v2h10V8H7zm0 4v2h7v-2H7z"></path></svg><span>Campus Pulse</span></a><a class="nav-item" href="../tutoring.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"></path></svg><span>Tutoring</span></a><a class="nav-item" href="../skills.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Network</span></a><a class="nav-item" href="../leaderboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1c1.8-.4 3.23-1.6 3.61-3.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"></path></svg><span>Leaderboard</span></a><a class="nav-item" href="../assignments.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Teams</span></a><a class="nav-item" href="../academic-communities.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg><span>Courses</span></a><a class="nav-item active" href="../resources/resources.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path></svg><span>Resources</span></a><a class="nav-item" href="../articles/articles.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path></svg><span>Articles</span></a><a class="nav-item" href="../community.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg><span>Community</span></a><a class="nav-item" href="../notifications.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg><span>Alerts</span></a>
+
+
+
+
+
+
+<!-- User and Dark Mode -->
+<div class="nav-auth-buttons">
+<button aria-label="Toggle Dark Mode" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark Mode" type="button">
+            ☾
+          </button>
+<div class="nav-user-profile" onclick="window.location.href='../dashboard.html'" style="cursor:pointer;" title="View Dashboard">
+<img alt="Profile" class="nav-avatar" id="navUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="nav-user-info">
+<span class="nav-user-name" id="navUserName">Student</span>
+<span style="font-size:10px;color:var(--primary-color);font-weight:600;">Active</span>
+</div>
+</div>
+<button class="btn btn-outline btn-sm logout-trigger" id="navLogoutBtn" title="Sign out">
+            Logout
+          </button>
+</div>
+</nav>
+</div>
+</header>
+<!-- Main Resources Layout -->
+<main class="resources-container">
+<!-- LEFT COLUMN -->
+<aside>
+<div class="card" style="text-align:center;margin-bottom:16px;">
+<h3 style="font-size:15px;font-weight:700;color:var(--text-main);margin-bottom:6px;">
+          Have Study Notes?
+        </h3>
+<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
+          Help fellow undergraduates by sharing revision materials or summaries.
+        </p>
+<a class="btn btn-primary btn-sm btn-block" href="upload-resource.html" style="text-decoration:none;">
+          + Upload Resource
+        </a>
+</div>
+<div class="card" style="padding:12px 0;">
+<h4 style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;padding:0 16px 8px;border-bottom:1px solid var(--border-color,#d1d5db);">
+          Resource Navigation
+        </h4>
+<a class="sidebar-link-item" href="resources.html" style="color:var(--primary-color);font-weight:600;">
+<svg fill="currentColor" viewbox="0 0 24 24">
+<path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path>
+</svg>
+<span>All Resources (<span id="totalResourcesCount">0</span>)</span>
+</a>
+<a class="sidebar-link-item" href="my-resources.html">
+<svg fill="currentColor" viewbox="0 0 24 24">
+<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7V7h10v2z"></path>
+</svg>
+<span>My Uploads</span>
+</a>
+<a class="sidebar-link-item" href="resources.html?filter=bookmarked">
+<svg fill="currentColor" viewbox="0 0 24 24">
+<path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"></path>
+</svg>
+<span>Saved Resources</span>
+</a>
+</div>
+<div class="card">
+<h4 style="font-size:13px;font-weight:700;color:var(--text-main);margin-bottom:12px;">
+          Categories
+        </h4>
+<div style="display:flex;flex-direction:column;gap:4px;">
+<button class="filter-badge-btn" onclick="selectQuickCategory('all')" style="justify-content:flex-start;width:100%;border:none;">
+            📚 All Categories
+          </button>
+<button class="filter-badge-btn" onclick="selectQuickCategory('Mathematics')" style="justify-content:flex-start;width:100%;border:none;">
+            📐 Mathematics
+          </button>
+<button class="filter-badge-btn" onclick="selectQuickCategory('Statistics')" style="justify-content:flex-start;width:100%;border:none;">
+            📊 Statistics
+          </button>
+<button class="filter-badge-btn" onclick="selectQuickCategory('Programming')" style="justify-content:flex-start;width:100%;border:none;">
+            💻 Programming
+          </button>
+<button class="filter-badge-btn" onclick="selectQuickCategory('Networking')" style="justify-content:flex-start;width:100%;border:none;">
+            🌐 Networking
+          </button>
+<button class="filter-badge-btn" onclick="selectQuickCategory('Business')" style="justify-content:flex-start;width:100%;border:none;">
+            💼 Business
+          </button>
+<button class="filter-badge-btn" onclick="selectQuickCategory('English')" style="justify-content:flex-start;width:100%;border:none;">
+            📖 English
+          </button>
+</div>
+</div>
+</aside>
+<!-- CENTER COLUMN -->
+<section>
+<div class="resources-toolbar">
+<div class="toolbar-top">
+<div class="toolbar-title">
+<svg fill="currentColor" height="22" style="color:var(--primary-color);" viewbox="0 0 24 24" width="22">
+<path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path>
+</svg>
+<span>Learning Resources Feed</span>
+</div>
+<div class="toolbar-actions">
+<a class="btn btn-primary btn-sm" href="upload-resource.html">
+<svg fill="none" height="16" stroke="currentColor" viewbox="0 0 24 24" width="16">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              Upload
+            </a>
+<a class="btn btn-outline btn-sm" href="my-resources.html">
+              My Resources
+            </a>
+</div>
+</div>
+<div class="resource-search-box">
+<svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<input class="resource-search-input" id="resourceSearchInput" placeholder="Search by title, topic, uploader, or faculty..." type="text"/>
+</div>
+<div class="toolbar-filters">
+<select aria-label="Filter by category" class="filter-select" id="categorySelect">
+<option value="all">All Categories</option>
+<option value="Mathematics">Mathematics</option>
+<option value="Statistics">Statistics</option>
+<option value="Programming">Programming</option>
+<option value="Networking">Networking</option>
+<option value="Business">Business</option>
+<option value="English">English</option>
+</select>
+<select aria-label="Filter by faculty" class="filter-select" id="facultySelect">
+<option value="all">All Faculties</option>
+<option value="Science">Faculty of Science</option>
+<option value="Applied Sciences">Faculty of Applied Sciences</option>
+<option value="Computing">Faculty of Computing &amp; Technology</option>
+<option value="Engineering">Faculty of Engineering</option>
+<option value="Management">Faculty of Management</option>
+</select>
+<select aria-label="Sort resources" class="filter-select" id="sortSelect">
+<option value="newest">Sort: Newest First</option>
+<option value="oldest">Sort: Oldest First</option>
+<option value="title">Sort: Title (A-Z)</option>
+</select>
+<button class="filter-badge-btn" id="filterBookmarkedBtn" title="Show only bookmarked resources" type="button">
+<svg fill="currentColor" height="14" viewbox="0 0 24 24" width="14">
+<path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"></path>
+</svg>
+<span>Saved Only</span>
+</button>
+</div>
+</div>
+<div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;padding:0 4px;">
+        Showing
+        <strong id="showingCount" style="color:var(--text-main);">0</strong>
+        learning resources
+      </div>
+<div id="resourcesFeedContainer">
+<!-- Rendered by ../js/resources.js -->
+</div>
+</section>
+<!-- RIGHT COLUMN -->
+<aside>
+<div class="card">
+<h3 style="font-size:14.5px;font-weight:700;color:var(--text-main);margin-bottom:10px;">
+          Supported Formats
+        </h3>
+<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px;">
+          You can share undergraduate study materials up to
+          <strong>20 MB</strong> in size.
+        </p>
+<div style="display:flex;gap:8px;">
+<span class="file-type-icon file-type-pdf" style="width:48px;height:38px;font-size:10.5px;">PDF</span>
+<span class="file-type-icon file-type-ppt" style="width:48px;height:38px;font-size:10.5px;">PPT</span>
+<span class="file-type-icon file-type-doc" style="width:48px;height:38px;font-size:10.5px;">DOCX</span>
+</div>
+</div>
+<div class="card">
+<h3 style="font-size:14.5px;font-weight:700;color:var(--text-main);margin-bottom:12px;display:flex;justify-content:space-between;">
+<span>Top Contributors</span>
+<span style="font-size:11px;font-weight:normal;color:var(--text-muted);">
+            Leaderboard
+          </span>
+</h3>
+<div class="contributor-item">
+<img alt="Samudi" class="contributor-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="contributor-details">
+<div class="contributor-name">Samudi Wijesinghe</div>
+<div class="contributor-badge">Statistics Notes</div>
+</div>
+<span class="contributor-points">12 Files</span>
+</div>
+<div class="contributor-item">
+<img alt="Kaveen" class="contributor-avatar" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="contributor-details">
+<div class="contributor-name">Kaveen Perera</div>
+<div class="contributor-badge">Database Cheatsheets</div>
+</div>
+<span class="contributor-points">9 Files</span>
+</div>
+<div class="contributor-item">
+<img alt="Tharushi" class="contributor-avatar" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="contributor-details">
+<div class="contributor-name">Tharushi Fernando</div>
+<div class="contributor-badge">Python Tutorials</div>
+</div>
+<span class="contributor-points">7 Files</span>
+</div>
+</div>
+<div class="card" style="background-color:#f8fafc;border:1px dashed #cbd5e1;">
+<h4 style="font-size:13px;font-weight:700;color:var(--primary-color);margin-bottom:6px;">
+          💡 Knowledge Sharing Tip
+        </h4>
+<p style="font-size:12px;color:var(--text-muted);line-height:1.5;">
+          High-quality lecture summaries, worked past-paper solutions, and code diagrams receive the highest engagement from fellow undergraduate peers.
+        </p>
+</div>
+</aside>
+</main>
+<!-- Footer -->
+<footer class="footer">
+<div class="footer-content">
+<div>
+<strong>UniSkill Hub</strong> – Learning Resource Management &amp; Storage Module (Member 2).
+      </div>
+<div class="footer-links">
+<a href="../index.html">Home</a>
+<a href="../dashboard.html">Dashboard</a>
+<a href="resources.html">Resources</a>
+<a href="upload-resource.html">Upload</a>
+<a href="my-resources.html">My Uploads</a>
+<a href="../admin-login.html" style="color:var(--primary-color);font-weight:600;">
+          Admin Portal
+        </a>
+</div>
+</div>
+</footer>
+<!-- Scripts -->
+<script src="../js/supabase-config.js"></script>
+<script src="../js/logout.js"></script>
+<script src="../js/resources.js"></script>
+<script>
+    function selectQuickCategory(categoryName) {
+      const select = document.getElementById("categorySelect");
+
+      if (select) {
+        select.value = categoryName;
+        select.dispatchEvent(new Event("change"));
+      }
+    }
+  </script>
+<!-- Load theme script only once -->
+<script src="../js/theme.js"></script>
+
+<script src="../js/navbar-profile.js"></script>
+
+<script src="../js/simple-navigation.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrator Login – UniSkill Hub</title>
+  <meta name="description" content="Administration portal login for university system managers.">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <!-- Supabase JS Client v2 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/dark-mode.css">  <link rel="stylesheet" href="css/teal-theme.css">
+<link rel="stylesheet" href="css/dark-mode-unified.css">
+</head>
+<body>
+
+  <!-- Minimal Header Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" title="UniSkill Hub Home">
+        <span class="logo-badge">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+          </svg>
+        </span>
+        <span class="logo-text">UniSkill<span>Hub</span> <small style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-left: 6px;">[ADMIN PORTAL]</small></span>
+      </a>
+
+      <div style="font-size: 13px;">
+        <a href="index.html" style="font-weight: 600;">&larr; Back to Student Platform</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Card Container -->
+  <main class="admin-login-wrapper">
+    
+    <div class="admin-login-card">
+      <div class="admin-login-header">
+        <div class="admin-badge-icon">🛡️</div>
+        <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Admin Sign In</h2>
+        <p style="font-size: 13px; color: var(--text-muted);">Access system statistics, user directories, and content management.</p>
+      </div>
+
+      <div id="adminLoginAlert" class="alert alert-error" style="display: none; font-size: 12.5px;"></div>
+
+      <form id="adminLoginForm" onsubmit="adminLogin(event)">
+        
+        <div class="form-group">
+          <label class="form-label" for="adminEmail">Administrator Email</label>
+          <input 
+            type="email" 
+            id="adminEmail" 
+            class="form-control" 
+            placeholder="admin@uniskill.lk" 
+            value="admin@uniskill.lk"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="adminPassword">Security Key / Password</label>
+          <input 
+            type="password" 
+            id="adminPassword" 
+            class="form-control" 
+            placeholder="••••••••" 
+            value="admin123"
+            required
+          >
+          <span class="form-hint">Default academic evaluation key: admin123</span>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <button type="submit" class="btn btn-primary btn-block">Sign In to Dashboard</button>
+        </div>
+
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <span>© 2026 UniSkill Hub – System Administration Console</span>
+      <div class="footer-links">
+        <a href="index.html">Student Portal</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/admin.js"></script>
+<script src="js/theme.js"></script></body>
+</html>

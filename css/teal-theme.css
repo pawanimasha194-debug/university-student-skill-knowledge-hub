@@ -1,0 +1,14 @@
+/* UniSkill Hub: teal tokens, without global container/section overrides. */
+:root,html[data-theme="light"]{--primary-color:#0f766e;--primary-hover:#115e59;--primary-light:#e6f7f3;--bg-color:#f4f8f7;--bg-main:#f4f8f7;--card-bg:#fff;--text-main:#17332f;--text-muted:#58716b;--text-subtle:#738b85;--border-color:#d9e7e3;--success-color:#0f766e;--box-shadow:0 2px 12px rgba(15,118,110,.07);--box-shadow-hover:0 8px 26px rgba(15,118,110,.13);color-scheme:light}
+html[data-theme="dark"]{--primary-color:#5eead4;--primary-hover:#99f6e4;--primary-light:#153e3b;--bg-color:#0d1918;--bg-main:#0d1918;--card-bg:#162725;--text-main:#e7f5f1;--text-muted:#afc7c0;--text-subtle:#91ada5;--border-color:#2c4842;--success-color:#5eead4;--box-shadow:0 2px 12px rgba(0,0,0,.18);--box-shadow-hover:0 8px 24px rgba(0,0,0,.26);color-scheme:dark}
+body{background-color:var(--bg-color);color:var(--text-main)}
+.navbar,.topbar,.top-bar,.site-header{background-color:var(--card-bg);border-color:var(--border-color);color:var(--text-main)}
+.nav-item.active,.nav-link.active,.nav-logo{color:var(--primary-color)}
+.btn-primary,.primary-btn{background-color:#0f766e;border-color:#0f766e;color:white}
+.btn-primary:hover,.primary-btn:hover{background-color:#115e59;border-color:#115e59}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
+html[data-theme="dark"] .navbar,html[data-theme="dark"] .topbar,html[data-theme="dark"] .top-bar{background-color:var(--card-bg);color:var(--text-main)}
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),html[data-theme="dark"] textarea,html[data-theme="dark"] select{background-color:#1c3330;color:var(--text-main);border-color:var(--border-color)}
+html[data-theme="dark"] .btn-primary{background-color:#0f766e;color:white}
+.profile-photo-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0 16px}
+.profile-photo-status{font-size:13px;color:var(--text-muted)}

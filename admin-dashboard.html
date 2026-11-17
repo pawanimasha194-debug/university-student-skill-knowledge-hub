@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard – UniSkill Hub</title>
+  <meta name="description" content="University system management dashboard for monitoring students, academic resources, and published articles.">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <!-- Supabase JS Client v2 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/dark-mode.css">  <link rel="stylesheet" href="css/teal-theme.css">
+<link rel="stylesheet" href="css/dark-mode-unified.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+
+      <a href="admin-dashboard.html" class="nav-logo" title="UniSkill Hub Admin">
+        <span class="logo-badge" style="background-color: #191919;">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+          </svg>
+        </span>
+        <span class="logo-text">UniSkill<span>Hub</span> <small style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-left: 6px;">[ADMIN CONSOLE]</small></span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="index.html" class="btn btn-secondary btn-sm" target="_blank">Open Student Portal &nearr;</a>
+        <button onclick="adminLogout()" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Admin Main Container -->
+  <main class="admin-container">
+
+    <!-- Header Bar -->
+    <div class="admin-header-bar">
+      <div class="admin-header-title">
+        <h1>System Administration Console</h1>
+        <p>Monitor platform statistics, manage student accounts, and oversee learning materials.</p>
+      </div>
+      <div>
+        <span class="badge" style="background-color: #def7ec; color: #03543f; padding: 6px 12px; font-size: 12px;">System Status: Operational ✓</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-nav-tabs" aria-label="Admin Navigation">
+      <a href="admin-dashboard.html" class="admin-nav-tab active">📊 Overview</a>
+      <a href="manage-users.html" class="admin-nav-tab">👥 Manage Students</a>
+      <a href="manage-resources.html" class="admin-nav-tab">📚 Manage Resources</a>
+      <a href="manage-articles.html" class="admin-nav-tab">📝 Manage Articles</a>
+      <a href="reports.html" class="admin-nav-tab">📈 Analytics & Reports</a>
+    </nav>
+
+    <!-- Key Metric Overview Cards -->
+    <div class="stats-grid">
+
+      <!-- Stat 1: Students -->
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper">👥</div>
+        <div class="stat-details">
+          <div class="stat-number" id="statTotalStudents">...</div>
+          <div class="stat-label-text">Total Students</div>
+        </div>
+      </div>
+
+      <!-- Stat 2: Resources -->
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper">📚</div>
+        <div class="stat-details">
+          <div class="stat-number" id="statTotalResources">...</div>
+          <div class="stat-label-text">Total Resources</div>
+        </div>
+      </div>
+
+      <!-- Stat 3: Articles -->
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper">📝</div>
+        <div class="stat-details">
+          <div class="stat-number" id="statTotalArticles">...</div>
+          <div class="stat-label-text">Published Articles</div>
+        </div>
+      </div>
+
+      <!-- Stat 4: Questions -->
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper">💬</div>
+        <div class="stat-details">
+          <div class="stat-number" id="statTotalQuestions">...</div>
+          <div class="stat-label-text">Community Questions</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Shortcuts & Management Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 24px;">
+
+      <!-- Quick Content Management Card -->
+      <div class="card">
+        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--text-main);">
+          ⚡ Administrative Quick Actions
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Direct access to manage academic uploads and user directory records:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="manage-users.html" class="btn btn-outline btn-block" style="text-align: left; justify-content: flex-start;">
+            👥 Review Registered University Students
+          </a>
+          <a href="manage-resources.html" class="btn btn-outline btn-block" style="text-align: left; justify-content: flex-start;">
+            📚 Moderate Uploaded Learning Materials
+          </a>
+          <a href="manage-articles.html" class="btn btn-outline btn-block" style="text-align: left; justify-content: flex-start;">
+            📝 Audit Published Knowledge Articles
+          </a>
+          <a href="reports.html" class="btn btn-primary btn-block" style="text-align: left; justify-content: flex-start;">
+            📈 View Activity Reports & Top Downloads
+          </a>
+        </div>
+      </div>
+
+      <!-- System Health & Platform Logs -->
+      <div class="card">
+        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--text-main);">
+          📋 Recent System Activity
+        </h3>
+
+        <ul style="list-style: none; font-size: 13px; line-height: 1.8;">
+          <li style="border-bottom: 1px solid var(--border-color); padding: 6px 0;">
+            <span style="color: var(--success-color); font-weight: 700;">●</span> Supabase Database connected and responsive.
+          </li>
+          <li style="border-bottom: 1px solid var(--border-color); padding: 6px 0;">
+            <span style="color: var(--primary-color); font-weight: 700;">●</span> Storage Buckets: <code>learning-resources</code> & <code>article-images</code> operational.
+          </li>
+          <li style="border-bottom: 1px solid var(--border-color); padding: 6px 0;">
+            <span style="color: var(--text-muted); font-weight: 700;">●</span> Peer Connection System active across 5 university faculties.
+          </li>
+          <li style="padding: 6px 0;">
+            <span style="color: var(--text-muted); font-weight: 700;">●</span> Row Level Security policies verified for academic integrity.
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <span>© 2026 UniSkill Hub – System Administration Console</span>
+      <div class="footer-links">
+        <a href="admin-dashboard.html">Admin Home</a>
+        <a href="manage-users.html">Students</a>
+        <a href="manage-resources.html">Resources</a>
+        <a href="reports.html">Reports</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStatistics();
+    });
+  </script>
+<script src="js/theme.js"></script></body>
+</html>

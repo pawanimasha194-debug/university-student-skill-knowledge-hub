@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Student Profile – UniSkill Hub</title>
+<meta content="View and edit your university student profile, skills, and academic contributions." name="description"/>
+<!-- CSS Stylesheets -->
+<link href="css/style.css" rel="stylesheet"/>
+<link href="css/profile.css" rel="stylesheet"/>
+<link href="css/skills.css" rel="stylesheet"/>
+<link href="css/academic.css" rel="stylesheet"/>
+<!-- Supabase JS Client v2 from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="css/dark-mode.css" rel="stylesheet"/>
+<link href="css/portfolio.css" rel="stylesheet"/>
+<link href="css/teal-theme.css" rel="stylesheet"/>
+<link href="css/unified-navigation.css" rel="stylesheet"/><link rel="stylesheet" href="css/dark-mode-unified.css">
+<link rel="stylesheet" href="css/simple-modern.css"/>
+</head>
+<body>
+<!-- Top Navigation Bar -->
+<header class="navbar">
+<div class="nav-container">
+<a class="nav-logo" href="index.html" title="UniSkill Hub Home">
+<span class="logo-badge">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20">
+<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"></path>
+</svg>
+</span>
+<span class="logo-text">UniSkill<span>Hub</span></span>
+</a>
+<div class="nav-search">
+<svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<input aria-label="Search" placeholder="Search students, skills, resources..." type="text"/>
+</div>
+<nav class="nav-menu"><a class="nav-item" href="index.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></a><a class="nav-item" href="dashboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg><span>Dashboard</span></a><a class="nav-item" href="feed.html" title="Campus Pulse"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 3h18v14H7l-4 4V3zm4 5v2h10V8H7zm0 4v2h7v-2H7z"></path></svg><span>Campus Pulse</span></a><a class="nav-item" href="tutoring.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"></path></svg><span>Tutoring</span></a><a class="nav-item" href="skills.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Network</span></a><a class="nav-item" href="leaderboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1c1.8-.4 3.23-1.6 3.61-3.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"></path></svg><span>Leaderboard</span></a><a class="nav-item" href="assignments.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Teams</span></a><a class="nav-item" href="academic-communities.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg><span>Courses</span></a><a class="nav-item" href="resources/resources.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path></svg><span>Resources</span></a><a class="nav-item" href="articles/articles.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path></svg><span>Articles</span></a><a class="nav-item" href="community.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg><span>Community</span></a><a class="nav-item" href="notifications.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg><span>Alerts</span></a>
+
+
+
+
+
+
+
+<!-- Highlighted Active Tab -->
+
+<!-- User Profile Pill & Logout -->
+<div class="nav-auth-buttons">
+<div class="nav-user-profile" onclick="window.location.href='profile.html'" style="cursor: pointer;">
+<img alt="Profile" class="nav-avatar" id="navUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="nav-user-info">
+<span class="nav-user-name" id="navUserName">Student</span>
+<span style="font-size: 10px; color: var(--primary-color); font-weight: 600;">Active</span>
+</div>
+</div>
+<button class="btn btn-outline btn-sm logout-trigger" id="navLogoutBtn" title="Sign out">Logout</button>
+</div>
+</nav>
+</div>
+</header>
+<!-- Main Profile Container -->
+<main class="skills-center-container">
+<!-- Profile View Card -->
+<div class="profile-view-card">
+<div class="profile-view-banner"></div>
+<div class="profile-view-header">
+<img alt="Student" class="profile-view-avatar" id="myProfileAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="profile-photo-actions"><label class="btn btn-outline btn-sm" for="profilePhotoFile" style="cursor:pointer">📷 Change profile picture</label><input accept="image/png,image/jpeg,image/webp" aria-label="Choose profile picture" id="profilePhotoFile" style="display:none" type="file"/><span aria-live="polite" class="profile-photo-status" id="profilePhotoStatus" role="status"></span></div>
+<div class="profile-view-top-row">
+<div>
+<h1 class="profile-view-name" id="myProfileName">Undergraduate Student</h1>
+<div class="profile-view-sub" id="myProfileFaculty">Faculty of Computing &amp; Technology</div>
+<div class="profile-view-details">
+<span id="myProfileDegree">BSc Software Engineering</span> • <span id="myProfileYear">2nd Year</span>
+</div>
+</div>
+<div>
+<button class="btn btn-outline btn-sm" onclick="toggleEditBio()">✏️ Edit Profile Bio</button>
+</div>
+</div>
+<!-- Editable Bio Section -->
+<div class="profile-view-bio">
+<h4 style="font-size: 12.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Academic Bio</h4>
+<p id="myProfileBio">Undergraduate student passionate about sharing academic knowledge, software development, and peer study groups on UniSkill Hub.</p>
+<div id="bioEditBox" style="display: none; margin-top: 10px;">
+<textarea class="form-control" id="bioInput" style="min-height: 80px; margin-bottom: 8px;"></textarea>
+<div style="display: flex; gap: 8px;">
+<button class="btn btn-primary btn-sm" onclick="saveBio()">Save Bio</button>
+<button class="btn btn-secondary btn-sm" onclick="toggleEditBio()">Cancel</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Academic Reputation Score & Badges (Feature 2 & 18) -->
+<div class="reputation-widget">
+<div class="reputation-header">
+<div class="reputation-title">
+<span>?? My Academic Reputation Score</span>
+<span style="font-size: 11.5px; font-weight: normal; color: var(--text-muted);">(Calculated from Peer Reviews, Tutoring &amp; Resources)</span>
+</div>
+<div class="reputation-score-badge" id="myRepScore">
+          92 / 100
+        </div>
+</div>
+<div class="reputation-bar-wrap">
+<div class="reputation-bar-fill" id="myRepBar" style="width: 92%;"></div>
+</div>
+<div style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">My Earned Academic Badges:</div>
+<div class="academic-badges-wrap" id="myBadgesWrap">
+<span class="academic-badge top-tutor">?? Top Tutor</span>
+<span class="academic-badge mentor">? Campus Mentor</span>
+<span class="academic-badge knowledge-sharer">?? Knowledge Sharer</span>
+<span class="academic-badge problem-solver">?? Problem Solver</span>
+<span class="academic-badge">?? Team Player</span>
+</div>
+</div>
+<!-- Skills Management Card -->
+<div class="profile-section-card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+<h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;">My Skills &amp; Competencies</h3>
+<span style="font-size: 12px; color: var(--text-muted);">Showcased in Student Directory</span>
+</div>
+<div id="mySkillsWrap" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+<span class="skill-pill">Web Development</span>
+<span class="skill-pill">Java</span>
+<span class="skill-pill">SQL</span>
+</div>
+<!-- Add Skill input -->
+<div style="display: flex; gap: 8px; max-width: 400px;">
+<input class="form-control" id="newSkillInput" placeholder="Add a new skill (e.g. Python, UI/UX)..." style="font-size: 13px;" type="text"/>
+<button class="btn btn-primary btn-sm" onclick="addNewSkill()" style="white-space: nowrap;">+ Add Skill</button>
+</div>
+</div>
+<!-- Advanced Student Portfolio -->
+<section class="portfolio-section">
+<div class="portfolio-heading">
+<h2>My Projects</h2>
+<button class="btn btn-primary btn-sm" onclick="togglePortfolioForm('projectForm')" type="button">
+      + Add Project
+    </button>
+</div>
+<form class="portfolio-form" id="projectForm" style="display:none">
+<input id="projectTitle" placeholder="Project Title" required=""/>
+<textarea id="projectDescription" placeholder="Project Description" required=""></textarea>
+<input id="projectTechnology" placeholder="Technologies Used"/>
+<input id="projectLink" placeholder="GitHub / Project URL" type="url"/>
+<button class="btn btn-primary" type="submit">
+      Save Project
+    </button>
+</form>
+<div class="portfolio-grid" id="portfolioProjects"></div>
+</section>
+<section class="portfolio-section">
+<div class="portfolio-heading">
+<h2>Certificates &amp; Achievements</h2>
+<button class="btn btn-primary btn-sm" onclick="togglePortfolioForm('certificateForm')" type="button">
+      + Add Certificate
+    </button>
+</div>
+<form class="portfolio-form" id="certificateForm" style="display:none">
+<input id="certificateTitle" placeholder="Certificate / Award Name" required=""/>
+<input id="certificateIssuer" placeholder="Issued By" required=""/>
+<input id="certificateDate" type="month"/>
+<input id="certificateLink" placeholder="Certificate URL" type="url"/>
+<button class="btn btn-primary" type="submit">
+      Save Certificate
+    </button>
+</form>
+<div class="portfolio-grid" id="portfolioCertificates"></div>
+</section>
+<section class="portfolio-section">
+<div class="portfolio-heading">
+<h2>Work &amp; Volunteer Experience</h2>
+<button class="btn btn-primary btn-sm" onclick="togglePortfolioForm('experienceForm')" type="button">
+      + Add Experience
+    </button>
+</div>
+<form class="portfolio-form" id="experienceForm" style="display:none">
+<input id="experienceRole" placeholder="Job Title / Role" required=""/>
+<input id="experienceCompany" placeholder="Company / Organization" required=""/>
+<input id="experiencePeriod" placeholder="Period (e.g. 2025 - Present)"/>
+<textarea id="experienceDescription" placeholder="Describe your responsibilities">
+    </textarea>
+<button class="btn btn-primary" type="submit">
+      Save Experience
+    </button>
+</form>
+<div class="portfolio-grid" id="portfolioExperience"></div>
+</section>
+<!-- Quick Shortcuts Card -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+<!-- Card: Uploaded Resources -->
+<div class="card">
+<h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">My Learning Materials</h4>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+          Manage the lecture summaries and exam notes you shared.
+        </p>
+<a class="btn btn-outline btn-sm btn-block" href="resources/my-resources.html">Manage My Resources →</a>
+</div>
+<!-- Card: Published Articles -->
+<div class="card">
+<h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">My Knowledge Articles</h4>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+          Review and update your published tutorials and articles.
+        </p>
+<a class="btn btn-outline btn-sm btn-block" href="articles/my-articles.html">Manage My Articles →</a>
+</div>
+<!-- Card: Peer Network -->
+<div class="card">
+<h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Peer Network</h4>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+          Review accepted study connections and pending requests.
+        </p>
+<a class="btn btn-outline btn-sm btn-block" href="connections.html">View Connections →</a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="footer">
+<div class="footer-content">
+<span>© 2026 UniSkill Hub – CMIS 3124 University Group Project</span>
+<div class="footer-links">
+<a href="index.html">Home</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="skills.html">Skills &amp; Network</a>
+<a href="admin-login.html" style="color: var(--text-subtle);">Admin Portal</a>
+</div>
+</div>
+</footer>
+<!-- Scripts -->
+<script src="js/supabase-config.js"></script>
+<script src="js/logout.js"></script>
+<script src="js/academic-core.js"></script>
+<script src="js/skills.js"></script>
+<script src="js/profile-photo.js"></script>
+<script>
+    let myCurrentProfile = null;
+    const profileClient = () => window.supabaseClient;
+
+    async function loadMyProfile() {
+      try {
+        const sb = profileClient();
+        if (!sb) throw new Error('Supabase client is unavailable.');
+        const { data: auth, error: authError } = await sb.auth.getUser();
+        if (authError || !auth?.user) {
+          window.location.href = 'login.html';
+          return;
+        }
+        const { data, error } = await sb.from('profiles').select('*').eq('id', auth.user.id).single();
+        if (error) throw error;
+        myCurrentProfile = data;
+        renderMyProfile(data);
+        const navName = document.getElementById('navUserName');
+        const navAvatar = document.getElementById('navUserAvatar');
+        if (navName) navName.textContent = (data.full_name || 'Student').split(' ')[0];
+        if (navAvatar && data.profile_image) navAvatar.src = data.profile_image;
+      } catch (err) {
+        console.error('Profile loading failed:', err);
+        alert('Could not load your profile: ' + err.message);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadMyProfile);
+
+    function renderMyProfile(p) {
+      if (!p) return;
+      document.getElementById('myProfileName').textContent = p.full_name || 'Undergraduate Student';
+      document.getElementById('myProfileFaculty').textContent = p.faculty || 'Faculty of Science';
+      document.getElementById('myProfileDegree').textContent = p.degree || 'BSc Degree';
+      document.getElementById('myProfileYear').textContent = p.academic_year || 'Undergraduate';
+      document.getElementById('myProfileBio').textContent = p.bio || '';
+      if (p.profile_image) document.getElementById('myProfileAvatar').src = p.profile_image;
+      renderSkillsPills(p.skills);
+      if (window.AcademicCore) {
+        const rep = window.AcademicCore.calculateAcademicReputation(p.id);
+        const scoreEl = document.getElementById('myRepScore');
+        const barEl = document.getElementById('myRepBar');
+        const badgesWrap = document.getElementById('myBadgesWrap');
+        if (scoreEl) scoreEl.textContent = rep.score + ' / 100';
+        if (barEl) barEl.style.width = rep.score + '%';
+        if (badgesWrap && rep.badges) {
+          badgesWrap.replaceChildren();
+          rep.badges.forEach(b => {
+            const span = document.createElement('span');
+            span.className = 'academic-badge top-tutor';
+            span.textContent = (b.icon || '') + ' ' + b.name;
+            badgesWrap.appendChild(span);
+          });
+        }
+      }
+    }
+
+    function parseSkills(value) {
+      return (Array.isArray(value) ? value : (value || '').split(','))
+        .map(s => String(s).trim()).filter(Boolean);
+    }
+
+    function renderSkillsPills(skills) {
+      const wrap = document.getElementById('mySkillsWrap');
+      if (!wrap) return;
+      wrap.replaceChildren();
+      parseSkills(skills).forEach(skill => {
+        const span = document.createElement('span');
+        span.className = 'skill-pill';
+        span.appendChild(document.createTextNode(skill + ' '));
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = '×';
+        remove.setAttribute('aria-label', 'Remove ' + skill);
+        remove.style.cssText = 'cursor:pointer;margin-left:4px;font-weight:bold;background:none;border:0;color:inherit';
+        remove.addEventListener('click', () => removeSkill(skill));
+        span.appendChild(remove);
+        wrap.appendChild(span);
+      });
+    }
+
+    function toggleEditBio() {
+      const box = document.getElementById('bioEditBox');
+      const p = document.getElementById('myProfileBio');
+      const input = document.getElementById('bioInput');
+      const opening = box.style.display === 'none';
+      if (opening) input.value = myCurrentProfile?.bio || '';
+      box.style.display = opening ? 'block' : 'none';
+      p.style.display = opening ? 'none' : 'block';
+    }
+
+    async function saveProfileChanges(changes) {
+      const sb = profileClient();
+      if (!sb) throw new Error('Supabase connection unavailable');
+      const { data: auth, error: authError } = await sb.auth.getUser();
+      if (authError || !auth?.user) throw new Error('Please log in again.');
+      if (!myCurrentProfile || myCurrentProfile.id !== auth.user.id) {
+        throw new Error('Profile identity mismatch. Reload this page.');
+      }
+      const { data, error } = await sb.from('profiles')
+        .update(changes).eq('id', auth.user.id).select('*').single();
+      if (error) throw error;
+      myCurrentProfile = data;
+      renderMyProfile(data);
+      return data;
+    }
+
+    async function saveBio() {
+      const text = document.getElementById('bioInput').value.trim();
+      try {
+        await saveProfileChanges({ bio: text });
+        toggleEditBio();
+        alert('Bio saved to Supabase successfully!');
+      } catch (err) {
+        console.error(err);
+        alert('Bio save failed: ' + err.message);
+      }
+    }
+
+    async function addNewSkill() {
+      const input = document.getElementById('newSkillInput');
+      const value = input.value.trim();
+      if (!value) return;
+      const skills = parseSkills(myCurrentProfile?.skills);
+      if (skills.some(s => s.toLowerCase() === value.toLowerCase())) return;
+      skills.push(value);
+      try {
+        await saveProfileChanges({ skills: skills.join(', ') });
+        input.value = '';
+      } catch (err) {
+        console.error(err);
+        alert('Skill save failed: ' + err.message);
+      }
+    }
+
+    async function removeSkill(skillName) {
+      const skills = parseSkills(myCurrentProfile?.skills).filter(s => s !== skillName);
+      try {
+        await saveProfileChanges({ skills: skills.join(', ') });
+      } catch (err) {
+        console.error(err);
+        alert('Could not remove skill: ' + err.message);
+      }
+    }
+  </script>
+<script src="js/portfolio.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/simple-navigation.js"></script>
+</body>
+</html>

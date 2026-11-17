@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Peer Tutoring Marketplace – UniSkill Hub</title>
+<meta content="Connect with fellow university undergraduates for one-on-one and group peer tutoring, availability booking, and post-session study materials." name="description"/>
+<!-- CSS Stylesheets -->
+<link href="css/style.css" rel="stylesheet"/>
+<link href="css/profile.css" rel="stylesheet"/>
+<link href="css/skills.css" rel="stylesheet"/>
+<link href="css/academic.css" rel="stylesheet"/>
+<!-- Supabase JS Client v2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="css/dark-mode.css" rel="stylesheet"/> <link href="css/teal-theme.css" rel="stylesheet"/>
+<link href="css/unified-navigation.css" rel="stylesheet"/><link rel="stylesheet" href="css/dark-mode-unified.css">
+<link rel="stylesheet" href="css/simple-modern.css"/>
+</head>
+<body>
+<!-- ==============================================================================
+       LinkedIn-Inspired Top Navigation Bar
+       ============================================================================== -->
+<header class="navbar">
+<div class="nav-container">
+<!-- Left: Logo -->
+<a class="nav-logo" href="index.html" title="Back to Home Page">
+<span class="logo-badge">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20">
+<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"></path>
+</svg>
+</span>
+<span class="logo-text">UniSkill<span>Hub</span></span>
+</a>
+<!-- Center: Academic Search Bar -->
+<div class="nav-search">
+<svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<input aria-label="Search" id="tutoringGlobalSearch" placeholder="Search tutors, subjects, courses (e.g. Statistics, Python, CMIS3124)..." type="text"/>
+</div>
+<!-- Right: Navigation Menu Links -->
+<nav class="nav-menu"><a class="nav-item" href="index.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></a><a class="nav-item" href="dashboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg><span>Dashboard</span></a><a class="nav-item" href="feed.html" title="Campus Pulse"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 3h18v14H7l-4 4V3zm4 5v2h10V8H7zm0 4v2h7v-2H7z"></path></svg><span>Campus Pulse</span></a><a class="nav-item active" href="tutoring.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"></path></svg><span>Tutoring</span></a><a class="nav-item" href="skills.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Network</span></a><a class="nav-item" href="leaderboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1c1.8-.4 3.23-1.6 3.61-3.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"></path></svg><span>Leaderboard</span></a><a class="nav-item" href="assignments.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Teams</span></a><a class="nav-item" href="academic-communities.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg><span>Courses</span></a><a class="nav-item" href="resources/resources.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path></svg><span>Resources</span></a><a class="nav-item" href="articles/articles.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path></svg><span>Articles</span></a><a class="nav-item" href="community.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg><span>Community</span></a><a class="nav-item" href="notifications.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg><span>Alerts</span></a>
+
+
+<!-- Highlighted Active Tab -->
+
+
+
+
+
+
+
+<!-- Authenticated Profile -->
+<div class="nav-auth-buttons">
+<div class="nav-user-profile" onclick="window.location.href='profile.html'" style="cursor: pointer;">
+<img alt="Profile" class="nav-avatar" id="navUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="nav-user-info">
+<span class="nav-user-name" id="navUserName">Student</span>
+<span style="font-size: 10px; color: var(--primary-color); font-weight: 600;">Active</span>
+</div>
+</div>
+<button class="btn btn-outline btn-sm logout-trigger" id="navLogoutBtn">Logout</button>
+</div>
+</nav>
+</div>
+</header>
+<!-- ==============================================================================
+       Main Page Header / Breadcrumb & Notice
+       ============================================================================== -->
+<div style="background-color: #ffffff; border-bottom: 1px solid var(--border-color); padding: 16px 0;">
+<div style="max-width: 1140px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+<div>
+<h1 style="font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+          🎓 Peer Tutoring Marketplace
+        </h1>
+<p style="font-size: 13.5px; color: var(--text-muted); margin: 0;">
+          Free university academic tutoring by high-achieving classmates. Book available slots, collaborate on coursework, and access lecture study guides.
+        </p>
+</div>
+<div>
+<button class="btn btn-primary" onclick="openBecomeTutorModal()">+ Become a Campus Tutor</button>
+</div>
+</div>
+</div>
+<!-- ==============================================================================
+       Tutoring Content Container
+       ============================================================================== -->
+<main style="max-width: 1140px; margin: 20px auto; padding: 0 16px; width: 100%;">
+<!-- Navigation Tabs -->
+<div style="display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px;">
+<button class="btn btn-sm btn-primary" id="tabBrowseBtn" onclick="switchTutoringTab('browse')">🔍 Browse All Tutors</button>
+<button class="btn btn-sm btn-outline" id="tabBookingsBtn" onclick="switchTutoringTab('bookings')">📅 My Booked Sessions &amp; Materials</button>
+<button class="btn btn-sm btn-outline" id="tabManageBtn" onclick="switchTutoringTab('manage')">⚙️ Tutor Control Center</button>
+</div>
+<!-- Alert Message Area -->
+<div class="alert alert-success" id="tutoringAlert" style="display: none; margin-bottom: 16px;"></div>
+<!-- ============================================================================
+         TAB 1: Browse Tutors
+         ============================================================================ -->
+<div id="tabBrowse">
+<!-- Filter Toolbar -->
+<div class="card" style="margin-bottom: 16px; padding: 14px;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: center;">
+<div>
+<label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">FACULTY</label>
+<select class="form-control" id="filterFacultySelect" onchange="filterTutorsList()" style="font-size: 13px; height: 36px;">
+<option value="all">All University Faculties</option>
+<option value="Faculty of Applied Sciences">Faculty of Applied Sciences</option>
+<option value="Faculty of Computing &amp; Technology">Faculty of Computing &amp; Technology</option>
+<option value="Faculty of Science">Faculty of Science</option>
+<option value="Faculty of Engineering">Faculty of Engineering</option>
+</select>
+</div>
+<div>
+<label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">ACADEMIC SUBJECT</label>
+<select class="form-control" id="filterSubjectSelect" onchange="filterTutorsList()" style="font-size: 13px; height: 36px;">
+<option value="all">All Academic Subjects</option>
+<option value="Statistics">Statistics &amp; Probability</option>
+<option value="Mathematics">Calculus &amp; Mathematics</option>
+<option value="Database">Database Systems &amp; SQL</option>
+<option value="Python">Python Programming</option>
+<option value="Bioinformatics">Bioinformatics</option>
+<option value="Circuit">Circuit Analysis &amp; MATLAB</option>
+</select>
+</div>
+<div>
+<label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">MINIMUM RATING</label>
+<select class="form-control" id="filterRatingSelect" onchange="filterTutorsList()" style="font-size: 13px; height: 36px;">
+<option value="0">All Ratings</option>
+<option value="4.8">⭐ 4.8 &amp; Above</option>
+<option value="4.9">⭐ 4.9 &amp; Above (Top Tutors)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Tutors List Grid -->
+<div id="tutorsContainer">
+<!-- Injected dynamically via js/tutoring.js -->
+</div>
+</div>
+<!-- ============================================================================
+         TAB 2: My Booked Sessions & Materials (Feature 6, 8, 9)
+         ============================================================================ -->
+<div id="tabBookings" style="display: none;">
+<div class="card" style="padding: 18px; margin-bottom: 16px;">
+<h3 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">My Upcoming Tutoring Sessions</h3>
+<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          Review the peer tutoring sessions you have booked. Meeting links are active 15 minutes before the scheduled time slot.
+        </p>
+<div id="myBookingsContainer">
+<!-- Injected dynamically via js/tutoring.js -->
+</div>
+</div>
+<!-- Post-Session Materials Section -->
+<div class="card" style="padding: 18px;">
+<h3 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">📥 Post-Session Study Materials &amp; Cheatsheets</h3>
+<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          Materials, worked solutions, and recordings provided by tutors after each session.
+        </p>
+<div id="tutoringMaterialsContainer">
+<!-- Injected dynamically via js/tutoring.js -->
+</div>
+</div>
+</div>
+<!-- ============================================================================
+         TAB 3: Tutor Control Center (Features 5, 7, 8)
+         ============================================================================ -->
+<div id="tabManage" style="display: none;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+<!-- Availability Management Card -->
+<div class="card" style="padding: 18px;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+<h3 style="font-size: 16px; font-weight: 700;">📅 Manage Weekly Availability</h3>
+<button class="btn btn-outline btn-sm" onclick="openAddSlotModal()">+ Add Time Slot</button>
+</div>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+            Students can only select from your open availability windows. Booked slots will lock automatically.
+          </p>
+<div id="myAvailabilitySlots">
+<!-- Injected dynamically -->
+</div>
+</div>
+<!-- Post-Session Study Material Uploader -->
+<div class="card" style="padding: 18px;">
+<h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">📤 Upload Tutoring Materials</h3>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+            Share PDF summaries, worked exercises, or slides into the Supabase <code>tutoring-materials</code> bucket.
+          </p>
+<form id="uploadTutoringMaterialForm" onsubmit="handleMaterialUpload(event)">
+<div style="margin-bottom: 10px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Material Title</label>
+<input class="form-control" id="matTitle" placeholder="e.g. ANOVA Derivations &amp; Past Paper Q3" required="" type="text"/>
+</div>
+<div style="margin-bottom: 10px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Subject</label>
+<input class="form-control" id="matSubject" placeholder="e.g. Statistics &amp; Probability" required="" type="text"/>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Select File (PDF, DOCX, PPT)</label>
+<input accept=".pdf,.docx,.ppt,.pptx" class="form-control" id="matFile" required="" type="file"/>
+</div>
+<button class="btn btn-primary btn-sm btn-block" type="submit">Upload Material for Students</button>
+</form>
+</div>
+</div>
+</div>
+</main>
+<!-- ==============================================================================
+       MODAL 1: Book Tutoring Session (Features 5 & 6)
+       ============================================================================== -->
+<div class="modal-overlay" id="bookSessionModal">
+<div class="modal-content" style="max-width: 520px;">
+<button class="modal-close" onclick="closeModal('bookSessionModal')" type="button">×</button>
+<h2 style="font-size: 18px; font-weight: 700; margin-bottom: 2px;">Book Tutoring Session</h2>
+<p id="modalTutorHeader" style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+        Choose your subject and preferred time slot.
+      </p>
+<form id="bookSessionForm" onsubmit="handleSessionBooking(event)">
+<input id="bookingTutorId" type="hidden"/>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">1. Select Subject</label>
+<select class="form-control" id="bookingSubjectSelect" required="">
+<!-- Injected based on tutor -->
+</select>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">2. Specific Topic or Question</label>
+<input class="form-control" id="bookingTopicInput" placeholder="e.g. Understanding Question 4 on 2024 Exam Paper" required="" type="text"/>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">3. Preferred Date</label>
+<input class="form-control" id="bookingDateInput" required="" type="date"/>
+</div>
+<div style="margin-bottom: 14px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">4. Available Weekly Time Slot</label>
+<div class="availability-slots-grid" id="modalSlotsContainer">
+<!-- Injected time slot buttons -->
+</div>
+<input id="selectedTimeSlot" required="" type="hidden"/>
+</div>
+<div style="margin-bottom: 16px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">5. Location Format</label>
+<select class="form-control" id="bookingLocationType">
+<option value="online">Online Google Meet (Link provided automatically)</option>
+<option value="physical">Physical Meeting (University Library Discussion Room)</option>
+</select>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px;">
+<button class="btn btn-secondary btn-sm" onclick="closeModal('bookSessionModal')" type="button">Cancel</button>
+<button class="btn btn-primary btn-sm" type="submit">Confirm Booking &amp; Lock Slot</button>
+</div>
+</form>
+</div>
+</div>
+<!-- ==============================================================================
+       MODAL 2: Tutor Review & Feedback Modal (Feature 9)
+       ============================================================================== -->
+<div class="modal-overlay" id="tutorReviewModal">
+<div class="modal-content" style="max-width: 480px;">
+<button class="modal-close" onclick="closeModal('tutorReviewModal')" type="button">×</button>
+<h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Leave Tutor Review</h2>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+        Only students who attended can rate and review peer tutors.
+      </p>
+<form id="tutorReviewForm" onsubmit="handleTutorReviewSubmit(event)">
+<input id="reviewTutorId" type="hidden"/>
+<input id="reviewSessionId" type="hidden"/>
+<div style="margin-bottom: 14px; text-align: center;">
+<label style="font-size: 12.5px; font-weight: 600; display: block; margin-bottom: 6px;">Select Star Rating</label>
+<div id="starRatingSelectArea" style="font-size: 26px; color: #f59e0b; cursor: pointer;">
+<span onclick="setReviewRating(1)">★</span>
+<span onclick="setReviewRating(2)">★</span>
+<span onclick="setReviewRating(3)">★</span>
+<span onclick="setReviewRating(4)">★</span>
+<span onclick="setReviewRating(5)">★</span>
+</div>
+<input id="reviewStarRating" type="hidden" value="5"/>
+</div>
+<div style="margin-bottom: 14px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Written Feedback</label>
+<textarea class="form-control" id="reviewFeedbackText" placeholder="e.g. Very patient tutor, explained complex theorems clearly with diagrams..." required="" rows="3"></textarea>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px;">
+<button class="btn btn-secondary btn-sm" onclick="closeModal('tutorReviewModal')" type="button">Cancel</button>
+<button class="btn btn-primary btn-sm" type="submit">Submit Review</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Footer -->
+<footer class="footer">
+<div class="footer-content">
+<div>
+<strong>UniSkill Hub</strong> – Academic Collaboration &amp; Peer Tutoring System (CMIS3124 Group 13).
+      </div>
+<div class="footer-links">
+<a href="index.html">Home</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="tutoring.html">Tutoring</a>
+<a href="skills.html">Skills</a>
+<a href="leaderboard.html">Leaderboard</a>
+<a href="assignments.html">Teams</a>
+<a href="academic-communities.html">Courses</a>
+<a href="resources/resources.html">Resources</a>
+</div>
+</div>
+</footer>
+<!-- Scripts -->
+<script src="js/supabase-config.js"></script>
+<script src="js/logout.js"></script>
+<script src="js/academic-core.js"></script>
+<script src="js/tutoring.js"></script>
+<script src="js/theme.js"></script>
+
+
+<script src="js/navbar-profile.js"></script>
+
+<script src="js/simple-navigation.js"></script>
+</body>
+</html>

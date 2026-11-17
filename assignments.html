@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Assignment Collaboration &amp; Team Finder – UniSkill Hub</title>
+<meta content="Find course project partners, collaborate on undergraduate assignments, and form multi-disciplinary university teams." name="description"/>
+<!-- CSS Stylesheets -->
+<link href="css/style.css" rel="stylesheet"/>
+<link href="css/profile.css" rel="stylesheet"/>
+<link href="css/academic.css" rel="stylesheet"/>
+<link href="css/dark-mode.css" rel="stylesheet"/>
+<!-- Supabase JS Client v2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="css/unified-navigation.css" rel="stylesheet"/>
+<link href="css/dark-mode-unified.css" rel="stylesheet"/>
+<link rel="stylesheet" href="css/simple-modern.css"/>
+</head>
+<body>
+<!-- Top Navigation Bar -->
+<header class="navbar">
+<div class="nav-container">
+<a class="nav-logo" href="index.html" title="Back to Home Page">
+<span class="logo-badge">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20">
+<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"></path>
+</svg>
+</span>
+<span class="logo-text">UniSkill<span>Hub</span></span>
+</a>
+<div class="nav-search">
+<svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<input aria-label="Search" id="assignmentSearchInput" placeholder="Search by course code, skill or role (e.g. CMIS3124, Frontend)..." type="text"/>
+</div>
+<nav class="nav-menu"><a class="nav-item" href="index.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></a><a class="nav-item" href="dashboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg><span>Dashboard</span></a><a class="nav-item" href="feed.html" title="Campus Pulse"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M3 3h18v14H7l-4 4V3zm4 5v2h10V8H7zm0 4v2h7v-2H7z"></path></svg><span>Campus Pulse</span></a><a class="nav-item" href="tutoring.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"></path></svg><span>Tutoring</span></a><a class="nav-item" href="skills.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Network</span></a><a class="nav-item" href="leaderboard.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1c1.8-.4 3.23-1.6 3.61-3.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"></path></svg><span>Leaderboard</span></a><a class="nav-item active" href="assignments.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg><span>Teams</span></a><a class="nav-item" href="academic-communities.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg><span>Courses</span></a><a class="nav-item" href="resources/resources.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"></path></svg><span>Resources</span></a><a class="nav-item" href="articles/articles.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path></svg><span>Articles</span></a><a class="nav-item" href="community.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg><span>Community</span></a><a class="nav-item" href="notifications.html"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg><span>Alerts</span></a>
+
+
+
+
+
+<!-- Highlighted Active Tab -->
+
+
+
+
+<!-- Authenticated Profile -->
+<div class="nav-auth-buttons">
+<div class="nav-user-profile" onclick="window.location.href='profile.html'" style="cursor: pointer;">
+<img alt="Profile" class="nav-avatar" id="navUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
+<div class="nav-user-info">
+<span class="nav-user-name" id="navUserName">Student</span>
+<span style="font-size: 10px; color: var(--primary-color); font-weight: 600;">Active</span>
+</div>
+</div>
+<button class="btn btn-outline btn-sm logout-trigger" id="navLogoutBtn">Logout</button>
+</div>
+</nav>
+</div>
+</header>
+<!-- Banner -->
+<div style="background-color: #ffffff; border-bottom: 1px solid var(--border-color); padding: 16px 0;">
+<div style="max-width: 1140px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+<div>
+<h1 style="font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+          👥 Assignment Collaboration &amp; Team Finder
+        </h1>
+<p style="font-size: 13.5px; color: var(--text-muted); margin: 0;">
+          Need team members for your coursework or group presentation? Post requirements and connect with skilled undergraduates.
+        </p>
+</div>
+<div>
+<button class="btn btn-primary" onclick="openCreateTeamModal()">+ Post Team Request</button>
+</div>
+</div>
+</div>
+<!-- Main Grid -->
+<main style="max-width: 1140px; margin: 24px auto; padding: 0 16px; width: 100%;">
+<!-- Alert Box -->
+<div class="alert alert-success" id="assignmentAlert" style="display: none; margin-bottom: 16px;"></div>
+<!-- Filter Bar -->
+<div class="card" style="padding: 12px 16px; margin-bottom: 16px;">
+<div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+<span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">FILTER BY COURSE:</span>
+<button class="btn btn-sm btn-primary course-filter-btn" onclick="filterByCourse('all')">All Courses</button>
+<button class="btn btn-sm btn-outline course-filter-btn" onclick="filterByCourse('CMIS3124')">CMIS3124</button>
+<button class="btn btn-sm btn-outline course-filter-btn" onclick="filterByCourse('SENG2201')">SENG2201</button>
+<button class="btn btn-sm btn-outline course-filter-btn" onclick="filterByCourse('STAT2102')">STAT2102</button>
+</div>
+</div>
+<!-- Active Assignment Requests Container -->
+<div id="assignmentTeamsContainer">
+<!-- Injected dynamically via js/assignments.js -->
+</div>
+</main>
+<!-- ==============================================================================
+       MODAL 1: Apply to Join Team Modal
+       ============================================================================== -->
+<div class="modal-overlay" id="joinTeamModal">
+<div class="modal-content" style="max-width: 480px;">
+<button class="modal-close" onclick="closeModal('joinTeamModal')" type="button">×</button>
+<h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Join Assignment Team</h2>
+<p id="joinModalTeamTitle" style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+        Apply to join this student project.
+      </p>
+<form id="joinTeamForm" onsubmit="handleJoinTeamSubmit(event)">
+<input id="joinTeamId" type="hidden"/>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Select Role You Wish to Fulfill</label>
+<select class="form-control" id="joinRoleSelect" required="">
+<!-- Injected based on team roles -->
+</select>
+</div>
+<div style="margin-bottom: 14px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Brief Introduction &amp; Relevant Skills</label>
+<textarea class="form-control" id="joinNoteInput" placeholder="e.g. 2nd year student with practical experience in HTML/CSS and database normalization..." required="" rows="3"></textarea>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px;">
+<button class="btn btn-secondary btn-sm" onclick="closeModal('joinTeamModal')" type="button">Cancel</button>
+<button class="btn btn-primary btn-sm" type="submit">Confirm &amp; Join Team</button>
+</div>
+</form>
+</div>
+</div>
+<!-- ==============================================================================
+       MODAL 2: Post Assignment Team Request Modal
+       ============================================================================== -->
+<div class="modal-overlay" id="createTeamModal">
+<div class="modal-content" style="max-width: 520px;">
+<button class="modal-close" onclick="closeModal('createTeamModal')" type="button">×</button>
+<h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Post Assignment Team Request</h2>
+<p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+        Specify your course code, required skills, and project timeline.
+      </p>
+<form id="createTeamForm" onsubmit="handleCreateTeamSubmit(event)">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+<div>
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Course Code</label>
+<input class="form-control" id="teamCourseCode" placeholder="e.g. CMIS3124" required="" type="text"/>
+</div>
+<div>
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Course Name</label>
+<input class="form-control" id="teamCourseName" placeholder="e.g. Web Design" required="" type="text"/>
+</div>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Project Title</label>
+<input class="form-control" id="teamProjectTitle" placeholder="e.g. E-Commerce Platform Architecture" required="" type="text"/>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Looking For (Comma-separated roles)</label>
+<input class="form-control" id="teamRolesNeeded" placeholder="e.g. Frontend Developer, Database Designer, Report Writer" required="" type="text"/>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+<div>
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Members Needed</label>
+<input class="form-control" id="teamMembersNeeded" max="6" min="1" required="" type="number" value="2"/>
+</div>
+<div>
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Submission Deadline</label>
+<input class="form-control" id="teamDeadline" required="" type="date"/>
+</div>
+</div>
+<div style="margin-bottom: 14px;">
+<label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Project Description</label>
+<textarea class="form-control" id="teamDescription" placeholder="Explain what your group project entails and how team members will collaborate..." required="" rows="3"></textarea>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px;">
+<button class="btn btn-secondary btn-sm" onclick="closeModal('createTeamModal')" type="button">Cancel</button>
+<button class="btn btn-primary btn-sm" type="submit">Publish Team Request</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Footer -->
+<footer class="footer">
+<div class="footer-content">
+<div>
+<strong>UniSkill Hub</strong> – Assignment Collaboration &amp; Team Finder System.
+      </div>
+<div class="footer-links">
+<a href="index.html">Home</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="tutoring.html">Tutoring</a>
+<a href="skills.html">Skills</a>
+<a href="leaderboard.html">Leaderboard</a>
+<a href="assignments.html">Teams</a>
+<a href="academic-communities.html">Courses</a>
+<a href="resources/resources.html">Resources</a>
+</div>
+</div>
+</footer>
+<!-- Scripts -->
+<script src="js/supabase-config.js"></script>
+<script src="js/logout.js"></script>
+<script src="js/academic-core.js"></script>
+<script src="js/assignments.js"></script>
+<script src="js/theme.js"></script>
+<!-- Global Supabase Navbar Profile Sync -->
+<script src="js/navbar-profile.js"></script>
+<script src="js/simple-navigation.js"></script>
+</body>
+</html>

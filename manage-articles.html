@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Articles – UniSkill Hub Admin</title>
+  <meta name="description" content="Audit and manage published knowledge articles on UniSkill Hub.">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <!-- Supabase JS Client v2 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/dark-mode.css">  <link rel="stylesheet" href="css/teal-theme.css">
+<link rel="stylesheet" href="css/dark-mode-unified.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+
+      <a href="admin-dashboard.html" class="nav-logo" title="UniSkill Hub Admin">
+        <span class="logo-badge" style="background-color: #191919;">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+          </svg>
+        </span>
+        <span class="logo-text">UniSkill<span>Hub</span> <small style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-left: 6px;">[ADMIN CONSOLE]</small></span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="index.html" class="btn btn-secondary btn-sm" target="_blank">Open Student Portal &nearr;</a>
+        <button onclick="adminLogout()" class="btn btn-outline btn-sm">Sign Out</button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Admin Main Container -->
+  <main class="admin-container">
+
+    <!-- Header Bar -->
+    <div class="admin-header-bar">
+      <div class="admin-header-title">
+        <h1>Knowledge Article Management</h1>
+        <p>Audit peer tutorials, research guides, and subject articles published by university students.</p>
+      </div>
+      <div>
+        <span class="badge" id="articlesCountBadge" style="background-color: var(--primary-light); color: var(--primary-color); padding: 6px 12px; font-size: 12px;">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-nav-tabs" aria-label="Admin Navigation">
+      <a href="admin-dashboard.html" class="admin-nav-tab">📊 Overview</a>
+      <a href="manage-users.html" class="admin-nav-tab">👥 Manage Students</a>
+      <a href="manage-resources.html" class="admin-nav-tab">📚 Manage Resources</a>
+      <a href="manage-articles.html" class="admin-nav-tab active">📝 Manage Articles</a>
+      <a href="reports.html" class="admin-nav-tab">📈 Analytics & Reports</a>
+    </nav>
+
+    <!-- Data Table Card -->
+    <div class="admin-table-card">
+      
+      <!-- Toolbar -->
+      <div class="table-toolbar">
+        <input 
+          type="text" 
+          class="table-search-input" 
+          placeholder="Search articles by title, topic, author..." 
+          oninput="loadArticles(this.value)"
+        >
+        <a href="articles/create-article.html" class="btn btn-primary btn-sm" target="_blank">+ Write New Article</a>
+      </div>
+
+      <!-- Responsive Table -->
+      <div class="table-responsive">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Article Title</th>
+              <th>Topic Category</th>
+              <th>Author</th>
+              <th>Engagement</th>
+              <th>Publish Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="articlesTableBody">
+            <tr><td colspan="6" style="text-align: center; padding: 24px;">Loading published articles...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <span>© 2026 UniSkill Hub – System Administration Console</span>
+      <div class="footer-links">
+        <a href="admin-dashboard.html">Admin Home</a>
+        <a href="manage-articles.html">Articles</a>
+        <a href="reports.html">Reports</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadArticles();
+    });
+  </script>
+<script src="js/theme.js"></script></body>
+</html>

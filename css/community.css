@@ -1,0 +1,401 @@
+/* ==============================================================================
+   UniSkill Hub - Community Discussion & Notifications Styles
+   File: css/community.css
+   Module: Member 5 – Community Discussion & Collaboration
+   Theme: LinkedIn-Inspired University Networking
+   ============================================================================== */
+
+/* Main Community Layout (Discussion Feed) */
+.community-container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Two-column layout for Ask Question & Question Details */
+.community-detail-container {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Centered single column (e.g. Notifications) */
+.notifications-container {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* Left Sidebar Navigation Card */
+.community-nav-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  position: sticky;
+  top: 74px;
+}
+
+.community-nav-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.community-category-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.community-category-btn:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.community-category-btn.active {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* Question Banner / Ask Bar */
+.ask-prompt-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ask-prompt-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.ask-prompt-input-fake {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: #f4f8f7;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.ask-prompt-input-fake:hover {
+  background-color: #e6f7f3;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* Discussion Question Card */
+.question-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 18px;
+  margin-bottom: 14px;
+  transition: box-shadow 0.2s;
+}
+
+.question-card:hover {
+  box-shadow: var(--box-shadow-hover);
+}
+
+.question-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.question-author-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.question-author-info {
+  flex: 1;
+}
+
+.question-author-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.question-meta {
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+
+.question-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  line-height: 1.4;
+  text-decoration: none;
+  display: block;
+}
+
+.question-title:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.question-excerpt {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.question-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+  font-size: 12.5px;
+  color: var(--text-subtle);
+}
+
+.answers-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.answers-count-badge:hover {
+  text-decoration: underline;
+}
+
+/* ==============================================================================
+   Question Details & Answers Thread (question-details.html)
+   ============================================================================== */
+.question-detail-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 24px;
+  margin-bottom: 18px;
+}
+
+.question-detail-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  line-height: 1.35;
+}
+
+.question-detail-body {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-main);
+  margin: 16px 0;
+  white-space: pre-wrap;
+}
+
+/* Answers Section */
+.answers-section-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.answers-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.answer-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.answer-item:last-child {
+  border-bottom: none;
+}
+
+.answer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.answer-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.answer-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-main);
+  white-space: pre-wrap;
+  padding-left: 46px;
+}
+
+/* Answer Submission Box */
+.reply-box-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+}
+
+/* ==============================================================================
+   Notifications Feed (notifications.html)
+   ============================================================================== */
+.notifications-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+}
+
+.notifications-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notifications-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.notification-item:hover {
+  background-color: #f8fafc;
+}
+
+.notification-item.unread {
+  background-color: #f0f7ff;
+}
+
+.notification-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-text {
+  font-size: 13.5px;
+  color: var(--text-main);
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+
+.notification-time {
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .community-container {
+    grid-template-columns: 1fr;
+  }
+
+  .community-detail-container {
+    grid-template-columns: 1fr;
+  }
+
+  .community-nav-card {
+    position: static;
+  }
+}

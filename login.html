@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login – UniSkill Hub</title>
+  <meta name="description" content="Sign in to your UniSkill Hub account to access your student network and shared knowledge resources.">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+  
+  <!-- Supabase JS Client v2 from Official CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/dark-mode.css">
+<link rel="stylesheet" href="css/dark-mode-unified.css">
+<body class="auth-page">
+
+  <!-- Top Logo Bar -->
+  <header class="auth-header">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-badge">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </span>
+      <span class="logo-text">UniSkill<span>Hub</span></span>
+    </a>
+  </header>
+
+  <!-- Main Centered Login Card -->
+  <main class="auth-container">
+    <div class="auth-card">
+      
+      <div class="auth-card-header">
+        <h1 class="auth-card-title">Sign in</h1>
+        <p class="auth-card-subtitle">Stay updated on your university student community.</p>
+      </div>
+
+      <!-- Feedback Alert Box -->
+      <div id="loginAlertBox" class="alert" style="display: none;" role="alert"></div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form" novalidate>
+        
+        <!-- Field 1: University Email -->
+        <div class="form-group">
+          <label for="loginEmail" class="form-label">University Email</label>
+          <input 
+            type="email" 
+            id="loginEmail" 
+            class="form-control" 
+            placeholder="e.g. student@university.ac.lk" 
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <!-- Field 2: Password -->
+        <div class="form-group">
+          <label for="loginPassword" class="form-label">Password</label>
+          <div class="password-field-wrapper">
+            <input 
+              type="password" 
+              id="loginPassword" 
+              class="form-control" 
+              placeholder="Enter your password" 
+              required
+              autocomplete="current-password"
+            >
+            <button type="button" id="toggleLoginPassword" class="password-toggle-btn">Show</button>
+          </div>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div>
+          <a href="#" id="forgotPasswordLink" class="forgot-password-link">Forgot password?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="loginSubmitBtn" class="btn btn-primary auth-submit-btn">
+          <span id="loginBtnSpinner" class="spinner" style="display: none;"></span>
+          <span id="loginBtnText">Login</span>
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <!-- Quick Demo Login Hint for Lecturer / Evaluator -->
+      <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; margin-bottom: 16px; font-size: 12px; text-align: center; color: var(--text-muted);">
+        <strong>Demo Quick Fill:</strong>
+        <a href="#" id="fillDemoAccount" style="color: var(--primary-color); display: block; margin-top: 4px;">Click here to autofill sample student account</a>
+      </div>
+
+      <!-- Switch to Register Link -->
+      <div class="auth-switch-box">
+        New to UniSkill Hub? <a href="register.html">Join now</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================================================
+       Forgot Password Modal
+       ============================================================================== -->
+  <div id="forgotPasswordModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <button type="button" id="closeForgotModal" class="modal-close" aria-label="Close modal">&times;</button>
+      
+      <h2 id="modalTitle" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Reset Your Password</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Enter your university email address and we'll send you a link to reset your account password.
+      </p>
+
+      <div id="resetModalAlert" class="alert" style="display: none;"></div>
+
+      <form id="forgotPasswordForm">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="resetEmail" class="form-label">University Email</label>
+          <input type="email" id="resetEmail" class="form-control" placeholder="student@university.ac.lk" required>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" id="cancelForgotModal" class="btn btn-secondary btn-sm">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Send Reset Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Files -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/login.js"></script>
+  
+  <script>
+    // Autofill helper for project demonstrations
+    document.getElementById('fillDemoAccount')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('loginEmail').value = 'student@university.ac.lk';
+      document.getElementById('loginPassword').value = 'password123';
+    });
+
+    // Check if student is already logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      const active = localStorage.getItem('uniskill_active_session');
+      if (active) {
+        try {
+          const parsed = JSON.parse(active);
+          const name = parsed.profile?.full_name || parsed.user?.user_metadata?.full_name;
+          if (name) {
+            const alertBox = document.getElementById('loginAlertBox');
+            if (alertBox) {
+              alertBox.style.display = 'block';
+              alertBox.className = 'alert alert-info';
+              alertBox.innerHTML = `You are already logged in as <strong>${name}</strong>. <a href="index.html" style="font-weight: 700; margin-left: 6px;">Go to Home Page &rarr;</a>`;
+            }
+          }
+        } catch (e) {}
+      }
+    });
+  </script>
+
+<script src="js/theme.js"></script></body>
+</html>
