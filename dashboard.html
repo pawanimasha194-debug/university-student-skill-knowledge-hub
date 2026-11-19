@@ -19,7 +19,16 @@
 <link href="css/unified-navigation.css" rel="stylesheet"/><link href="css/dark-mode-unified.css" rel="stylesheet"/>
 <link href="css/profile-editor.css" rel="stylesheet"/>
 <link href="css/simple-modern.css" rel="stylesheet"/>
-</head>
+<style>
+/* Dashboard clean layout – feed remains visible */
+body .dashboard-container {display:grid !important;grid-template-columns:minmax(0,1fr) 290px !important;gap:20px !important;align-items:start !important;}
+body .dashboard-container > .simple-dashboard-intro {grid-column:1 / -1 !important;grid-row:1 !important;}
+body .dashboard-container > .simple-dashboard-links {grid-column:1 / -1 !important;grid-row:2 !important;}
+body .dashboard-container > .dashboard-center {grid-column:1 !important;grid-row:3 !important;min-width:0 !important;display:flex !important;flex-direction:column !important;gap:16px !important;}
+body .dashboard-container > .dashboard-left {grid-column:2 !important;grid-row:3 !important;min-width:0 !important;}
+body .dashboard-container > .dashboard-right {display:none !important;}
+@media(max-width:800px){body .dashboard-container {grid-template-columns:minmax(0,1fr) !important;}body .dashboard-container > .dashboard-left {grid-column:1 !important;grid-row:3 !important;}body .dashboard-container > .dashboard-center {grid-column:1 !important;grid-row:4 !important;}}
+</style></head>
 <body>
 <!-- ==============================================================================
        LinkedIn-Inspired Top Navigation Bar
@@ -113,23 +122,21 @@
 <div class="reputation-widget">
 <div class="reputation-header">
 <div class="reputation-title">
-<span>?? Academic Reputation</span>
+<span>Contribution Points</span>
 </div>
-<div class="reputation-score-badge" id="dashRepScore">94 / 100</div>
+<div class="reputation-score-badge" id="dashRepScore">Loading…</div>
 </div>
 <div class="reputation-bar-wrap">
-<div class="reputation-bar-fill" id="dashRepBar" style="width: 94%;"></div>
+<div class="reputation-bar-fill" id="dashRepBar" style="width: 0%;"></div>
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 <span style="font-size: 11.5px; color: var(--text-muted);">Leaderboard Rank:</span>
 <a href="leaderboard.html" style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 12px; text-decoration: none;">
-            ?? #4 on Campus
+            Loading rank…
           </a>
 </div>
 <div class="academic-badges-wrap" id="dashBadgesWrap">
-<span class="academic-badge top-tutor">?? Top Tutor</span>
-<span class="academic-badge mentor">? Campus Mentor</span>
-<span class="academic-badge knowledge-sharer">?? Knowledge Sharer</span>
+<span class="academic-badge knowledge-sharer">Live activity points</span>
 </div>
 </div>
 <!-- Quick Shortcuts Card -->
@@ -195,52 +202,9 @@
 </div>
 </div>
 <!-- Today`s Schedule & Upcoming Tutoring Sessions (Feature 14) -->
-<div class="card" style="padding: 16px; margin-bottom: 16px; border-left: 4px solid var(--primary-color);">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin: 0;">
-            ?? Today`s Schedule &amp; Upcoming Tutoring
-          </h3>
-<a href="tutoring.html" style="font-size: 12px; font-weight: 600;">Manage Sessions →</a>
-</div>
-<div id="dashTodaySchedule" style="font-size: 13px; color: #4b5563; background: #f8fafc; border-radius: 6px; padding: 10px 12px;">
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-<div>
-<strong>Statistics &amp; Probability: Probability Distributions</strong>
-<div style="font-size: 12px; color: var(--text-muted);">Tutor: <strong>Samudi Wijesinghe</strong> � Tomorrow, 09:00 - 10:00</div>
-</div>
-<a class="btn btn-outline btn-sm" href="https://meet.google.com/uni-peer-tutoring" target="_blank">Join Google Meet</a>
-</div>
-</div>
-</div>
+
 <!-- Smart Academic Recommendations (Feature 15) -->
-<div class="card" style="padding: 16px; margin-bottom: 16px; background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%);">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-<h3 style="font-size: 14.5px; font-weight: 700; color: #1e3a8a; margin: 0;">
-            ?? Recommended for Your Faculty &amp; Courses
-          </h3>
-<span style="font-size: 11px; color: var(--text-muted);">AI Coursework Matching</span>
-</div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; font-size: 12.5px;">
-<div style="background: #ffffff; border: 1px solid #e0e7ff; border-radius: 6px; padding: 10px;">
-<span style="font-size: 10px; font-weight: 700; color: #4338ca; text-transform: uppercase;">TOP TUTOR</span>
-<div style="font-weight: 700; margin: 2px 0;">Samudi Wijesinghe</div>
-<div style="color: var(--text-muted); font-size: 11.5px;">Statistics &amp; Mathematics (? 4.95)</div>
-<a class="btn btn-primary btn-sm" href="tutoring.html" style="margin-top: 6px; display: inline-block; padding: 2px 8px; font-size: 11px;">Book Tutor</a>
-</div>
-<div style="background: #ffffff; border: 1px solid #e0e7ff; border-radius: 6px; padding: 10px;">
-<span style="font-size: 10px; font-weight: 700; color: #047857; text-transform: uppercase;">TOP EXAM NOTE</span>
-<div style="font-weight: 700; margin: 2px 0;">Regression Analysis &amp; ANOVA</div>
-<div style="color: var(--text-muted); font-size: 11.5px;">Applied Sciences (48 Helpful Votes)</div>
-<a class="btn btn-outline btn-sm" href="resources/resources.html" style="margin-top: 6px; display: inline-block; padding: 2px 8px; font-size: 11px;">View Note</a>
-</div>
-<div style="background: #ffffff; border: 1px solid #e0e7ff; border-radius: 6px; padding: 10px;">
-<span style="font-size: 10px; font-weight: 700; color: #b91c1c; text-transform: uppercase;">ASSIGNMENT TEAM</span>
-<div style="font-weight: 700; margin: 2px 0;">CMIS3124 Web Platform</div>
-<div style="color: var(--text-muted); font-size: 11.5px;">Looking for: Frontend Dev</div>
-<a class="btn btn-outline btn-sm" href="assignments.html" style="margin-top: 6px; display: inline-block; padding: 2px 8px; font-size: 11px;">Join Team</a>
-</div>
-</div>
-</div>
+
 <!-- Feed Filter Tabs -->
 <div class="feed-filter-bar">
 <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Sort feed by:</span>
@@ -390,192 +354,7 @@
 <!-- ============================================================================
          COLUMN 3 (RIGHT): Quick Links, Popular Skills, Top Contributors, Suggested
          ============================================================================ -->
-<aside class="dashboard-right">
-<!-- Assignment Collaboration Openings (Feature 10 & 14) -->
-<div class="widget-card" style="border-left: 3px solid #b91c1c;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<h3 class="widget-card-title" style="margin: 0;">
-<span>?? Team Projects Seeking Members</span>
-</h3>
-<a href="assignments.html" style="font-size: 11px; font-weight: 600;">View All</a>
-</div>
-<div style="font-size: 12.5px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
-<div style="display: flex; justify-content: space-between; align-items: center;">
-<span class="course-badge" style="font-size: 11px;">CMIS3124</span>
-<span style="font-size: 11px; color: #c53030; font-weight: 700;">Deadline: Friday</span>
-</div>
-<div style="font-weight: 700; margin: 4px 0 2px; color: var(--text-main);">Web Platform Project</div>
-<div style="font-size: 11.5px; color: #4a5568;">Need: Frontend Dev, Database Designer</div>
-<a class="btn btn-outline btn-sm btn-block" href="assignments.html" style="margin-top: 6px; font-size: 11.5px;">?? Join Team</a>
-</div>
-</div>
-<!-- Top Campus Tutors Widget (Feature 4) -->
-<div class="widget-card" style="border-left: 3px solid #057642;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<h3 class="widget-card-title" style="margin: 0;">
-<span>?? Top Campus Tutors</span>
-</h3>
-<a href="tutoring.html" style="font-size: 11px; font-weight: 600;">Browse All</a>
-</div>
-<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0;">
-<img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=200&amp;q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;"/>
-<div style="flex: 1; font-size: 12px;">
-<strong>Samudi Wijesinghe</strong> (? 4.95)
-            <div style="color: var(--text-muted); font-size: 11px;">Statistics, Mathematics, Java</div>
-</div>
-<a class="btn btn-primary btn-sm" href="tutoring.html" style="padding: 2px 6px; font-size: 11px;">Book</a>
-</div>
-<div style="display: flex; align-items: center; gap: 8px;">
-<img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&amp;fit=crop&amp;w=200&amp;q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;"/>
-<div style="flex: 1; font-size: 12px;">
-<strong>Kaveen Perera</strong> (? 4.88)
-            <div style="color: var(--text-muted); font-size: 11px;">Database Systems, SQL, Python</div>
-</div>
-<a class="btn btn-primary btn-sm" href="tutoring.html" style="padding: 2px 6px; font-size: 11px;">Book</a>
-</div>
-</div>
-<!-- 1. Quick Links Card -->
-<div class="widget-card">
-<h3 class="widget-card-title">
-<span>Quick Links</span>
-<svg fill="currentColor" height="16" viewbox="0 0 24 24" width="16"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path></svg>
-</h3>
-<ul class="quick-link-list">
-<li class="quick-link-item">
-<a href="#" onclick="alert('Navigating to University LMS portal...'); return false;">
-<span>University LMS Portal</span>
-<span class="badge">Online</span>
-</a>
-</li>
-<li class="quick-link-item">
-<a href="#" onclick="alert('Accessing Semester Past Paper Archive...'); return false;">
-<span>Past Paper Bank</span>
-<span class="badge">PDF</span>
-</a>
-</li>
-<li class="quick-link-item">
-<a href="#" onclick="alert('Viewing Academic Calendar 2026...'); return false;">
-<span>Academic Calendar</span>
-<span class="badge">2026</span>
-</a>
-</li>
-<li class="quick-link-item">
-<a href="#" onclick="alert('Opening Career Fair &amp; Internship Directory...'); return false;">
-<span>Career &amp; Internships</span>
-<span class="badge">Jobs</span>
-</a>
-</li>
-</ul>
-</div>
-<!-- 2. Popular Skills Card -->
-<div class="widget-card">
-<h3 class="widget-card-title">
-<span>Popular Skills</span>
-<span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">Trending</span>
-</h3>
-<div class="skills-cloud">
-<span class="skill-cloud-item">#Python</span>
-<span class="skill-cloud-item">#Java</span>
-<span class="skill-cloud-item">#WebDevelopment</span>
-<span class="skill-cloud-item">#Statistics</span>
-<span class="skill-cloud-item">#SQL</span>
-<span class="skill-cloud-item">#MachineLearning</span>
-<span class="skill-cloud-item">#UI/UX</span>
-<span class="skill-cloud-item">#DataScience</span>
-</div>
-</div>
-<!-- 3. Top Contributors Card -->
-<div class="widget-card">
-<h3 class="widget-card-title">
-<span>Top Contributors</span>
-<span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">Leaderboard</span>
-</h3>
-<div class="contributor-item">
-<img alt="Samudi" class="contributor-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
-<div class="contributor-details">
-<div class="contributor-name">Samudi Wijesinghe</div>
-<div class="contributor-badge">12 Resources Shared</div>
-</div>
-<span class="contributor-points">1,420 pts</span>
-</div>
-<div class="contributor-item">
-<img alt="Kaveen" class="contributor-avatar" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
-<div class="contributor-details">
-<div class="contributor-name">Kaveen Perera</div>
-<div class="contributor-badge">9 Tutorials Published</div>
-</div>
-<span class="contributor-points">1,280 pts</span>
-</div>
-<div class="contributor-item">
-<img alt="Tharushi" class="contributor-avatar" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
-<div class="contributor-details">
-<div class="contributor-name">Tharushi Fernando</div>
-<div class="contributor-badge">7 Study Guides</div>
-</div>
-<span class="contributor-points">980 pts</span>
-</div>
-</div>
-<!-- 4. Suggested Students (Utilizing Reusable Profile Card Component) -->
-<div class="widget-card">
-<h3 class="widget-card-title">
-<span>Suggested Students</span>
-<span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">Discover</span>
-</h3>
-<!-- Profile Card Component Example 1: Samudi Wijesinghe (As explicitly requested) -->
-<div class="profile-card" style="margin-bottom: 12px;">
-<div class="profile-card-banner"></div>
-<div class="profile-card-avatar-wrapper">
-<img alt="Samudi Wijesinghe" class="profile-card-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
-</div>
-<div class="profile-card-body">
-<h4 class="profile-card-name">Samudi Wijesinghe</h4>
-<p class="profile-card-degree">BSc Applied Sciences</p>
-<p class="profile-card-department">Mathematics &amp; Statistics</p>
-<div class="profile-card-skills-heading">Skills:</div>
-<div class="profile-card-skills">
-<span class="skill-pill">Java</span>
-<span class="skill-pill">Statistics</span>
-<span class="skill-pill">Web Development</span>
-</div>
-<div class="profile-card-actions">
-<button class="btn btn-outline btn-sm btn-block btn-connect">+ Connect</button>
-</div>
-</div>
-</div>
-<!-- Compact Student List Item 2 -->
-<div class="student-list-item">
-<img alt="Malith" class="student-list-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
-<div class="student-list-info">
-<h4 class="student-list-name">Malith Jayasuriya</h4>
-<p class="student-list-degree">BSc Engineering</p>
-<p class="student-list-department">Electrical &amp; Electronics</p>
-<div class="student-list-skills">
-<span class="skill-pill">C++</span>
-<span class="skill-pill">MATLAB</span>
-</div>
-<div class="student-list-actions">
-<button class="btn btn-outline btn-sm btn-connect">+ Connect</button>
-</div>
-</div>
-</div>
-<!-- Compact Student List Item 3 -->
-<div class="student-list-item">
-<img alt="Ananya" class="student-list-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=200&amp;q=80"/>
-<div class="student-list-info">
-<h4 class="student-list-name">Ananya Sharma</h4>
-<p class="student-list-degree">BSc Information Systems</p>
-<p class="student-list-department">Computing &amp; Technology</p>
-<div class="student-list-skills">
-<span class="skill-pill">UI/UX</span>
-<span class="skill-pill">JavaScript</span>
-</div>
-<div class="student-list-actions">
-<button class="btn btn-outline btn-sm btn-connect">+ Connect</button>
-</div>
-</div>
-</div>
-</div>
-</aside>
+
 </main>
 <!-- ==============================================================================
        Footer
@@ -661,6 +440,7 @@
 <script src="js/logout.js"></script>
 <script src="js/academic-core.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/dashboard-metrics.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/profile-editor.js"></script><script src="js/simple-navigation.js"></script>

@@ -177,20 +177,7 @@ function renderProfileToUI(profile) {
   }
 
   // Update Academic Reputation in Dashboard Widget (Feature 2, 14, 18)
-  if (window.AcademicCore) {
-    const rep = window.AcademicCore.calculateAcademicReputation(profile.id || 'usr_current');
-    const scoreEl = document.getElementById('dashRepScore');
-    const barEl = document.getElementById('dashRepBar');
-    const badgesWrap = document.getElementById('dashBadgesWrap');
-
-    if (scoreEl) scoreEl.textContent = `${rep.score} / 100`;
-    if (barEl) barEl.style.width = `${rep.score}%`;
-    if (badgesWrap && rep.badges) {
-      badgesWrap.innerHTML = rep.badges.map(b => 
-        `<span class="academic-badge top-tutor" title="${b.description}">${b.icon} ${b.name}</span>`
-      ).join(' ');
-    }
-  }
+  // Live contribution metrics are loaded by dashboard-metrics.js.
 
   // 3. Middle Column Post Creator Avatar & Welcome Header
   const postCreatorAvatar = document.getElementById('postCreatorAvatar');

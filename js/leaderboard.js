@@ -33,15 +33,47 @@ function setLeaderboardCategory(cat) {
   renderLeaderboardView();
 }
 
-function renderLeaderboardView() {
-  const students = window.AcademicCore.getCampusLeaderboard(currentLeaderboardCategory);
-  renderPodium(students.slice(0, 3));
-  renderLeaderboardTable(students);
+async function renderLeaderboardView() {
+  const body = document.getElementById('leaderboardBody');
+  if (body) body.innerHTML = '<tr><td colspan="7">Loading real campus activity…</td></tr>';
+  try {
+    if (!window.supabaseClient) throw new Error('Supabase is not configured');
+    const { data, error } = await window.supabaseClient.rpc('campus_leaderboard');
+    if (error) throw error;
+    const students = (data || []).map(st => ({
+      ...st,
+      avatar: st.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=student',
+      faculty: st.faculty || 'Not specified', degree: st.degree || '',
+      primary_skill: '', rating: '—', students_helped: 0,
+      badge: Number(st.score) > 0 ? 'Campus Contributor' : 'New Member',
+      score: Number(st.score) || 0,
+      posts_created: Number(st.posts_created) || 0,
+      likes_received: Number(st.likes_received) || 0,
+      comments_received: Number(st.comments_received) || 0,
+      projects_added: Number(st.projects_added) || 0,
+      certificates_added: Number(st.certificates_added) || 0
+    }));
+    const category = currentLeaderboardCategory;
+    const metric = category === 'resources' ? 'projects_added' : category === 'articles' ? 'certificates_added' : category === 'tutors' ? 'likes_received' : category === 'helpers' ? 'comments_received' : 'score';
+    // Tabs reflect verified social/portfolio metrics.
+    students.sort((a,b) => b[metric] - a[metric] || a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+    students.forEach((s,i) => { s.rank = i + 1; });
+    renderPodium(students.slice(0,3));
+    renderLeaderboardTable(students);
+    if (!students.length && body) body.innerHTML = '<tr><td colspan="7">No students yet.</td></tr>';
+    const podium = document.getElementById('podiumArea');
+    if (podium && students.length < 3) podium.innerHTML = '';
+  } catch (err) {
+    console.error('Leaderboard backend error:', err);
+    const podium = document.getElementById('podiumArea');
+    if (podium) podium.innerHTML = '';
+    if (body) body.innerHTML = '<tr><td colspan="7">Unable to load live leaderboard. Run dashboard-leaderboard-backend.sql in Supabase SQL Editor and check your connection.</td></tr>';
+  }
 }
 
 function renderPodium(top3) {
   const container = document.getElementById('podiumArea');
-  if (!container || top3.length < 3) return;
+  if (!container) return;
 
   const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
   const rankLabels = ['🥇 Rank 1 - Champion', '🥈 Rank 2', '🥉 Rank 3'];
@@ -54,7 +86,7 @@ function renderPodium(top3) {
       <img src="${escapeHtml(st.avatar)}" alt="${escapeHtml(st.name)}" style="width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 8px; border: 2px solid #e2e8f0; object-fit: cover;">
       
       <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 2px;">
-        <a href="student-profile.html?id=${st.id}" style="color: var(--text-main);">${escapeHtml(st.name)}</a>
+        <a href="student-profile.html?id=${encodeURIComponent(st.id)}" style="color: var(--text-main);">${escapeHtml(st.name)}</a>
       </h3>
       <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
         ${escapeHtml(st.faculty)} • ${escapeHtml(st.primary_skill)}
@@ -62,13 +94,13 @@ function renderPodium(top3) {
 
       <div style="background: #f8fafc; border-radius: 6px; padding: 8px; margin-bottom: 10px;">
         <div style="font-size: 20px; font-weight: 800; color: var(--primary-color);">
-          ${st.score} <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">/ 100</span>
+          ${st.score} <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">points</span>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted);">Academic Reputation Score</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Contribution Points</div>
       </div>
 
       <div style="font-size: 12px; color: #4b5563; margin-bottom: 10px;">
-        ⭐ <strong>${st.rating}</strong> Rating • <strong>${st.students_helped}</strong> Students Helped
+        📝 <strong>${st.posts_created}</strong> Posts • <strong>${st.projects_added}</strong> Projects
       </div>
 
       <div>
@@ -97,7 +129,7 @@ function renderLeaderboardTable(students) {
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="${escapeHtml(st.avatar)}" alt="${escapeHtml(st.name)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
             <div>
-              <a href="student-profile.html?id=${st.id}" style="font-weight: 700; font-size: 13.5px; color: var(--text-main); display: block;">
+              <a href="student-profile.html?id=${encodeURIComponent(st.id)}" style="font-weight: 700; font-size: 13.5px; color: var(--text-main); display: block;">
                 ${escapeHtml(st.name)}
               </a>
               <span style="font-size: 11px; color: var(--text-muted);">${escapeHtml(st.primary_skill)}</span>
@@ -110,19 +142,19 @@ function renderLeaderboardTable(students) {
         </td>
         <td>
           <span style="font-weight: 800; color: var(--primary-color); font-size: 14px;">${st.score}</span>
-          <span style="font-size: 11px; color: var(--text-muted);">/100</span>
+          <span style="font-size: 11px; color: var(--text-muted);">pts</span>
         </td>
         <td>
-          <span style="color: #f59e0b; font-weight: 700;">⭐ ${st.rating}</span>
+          <span style="color: #f59e0b; font-weight: 700;">${st.posts_created} posts</span>
         </td>
         <td style="font-size: 12.5px; color: #4b5563;">
-          <strong>${st.students_helped}</strong> helped • <strong>${st.sessions_completed}</strong> sessions • <strong>${st.resources_uploaded}</strong> notes
+          <strong>${st.likes_received}</strong> likes received • <strong>${st.comments_received}</strong> comments received • <strong>${st.projects_added}</strong> projects • <strong>${st.certificates_added}</strong> certificates
         </td>
         <td>
           <span class="academic-badge top-tutor">🎓 ${escapeHtml(st.badge)}</span>
         </td>
         <td style="text-align: right;">
-          <a href="student-profile.html?id=${st.id}" class="btn btn-outline btn-sm">View Profile</a>
+          <a href="student-profile.html?id=${encodeURIComponent(st.id)}" class="btn btn-outline btn-sm">View Profile</a>
         </td>
       </tr>
     `;
