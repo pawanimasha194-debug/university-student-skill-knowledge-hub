@@ -234,7 +234,7 @@ async function publishArticle() {
         imageUrl = urlResult.data.publicUrl;
       } else {
         console.warn('Image upload failed:', uploadResult.error);
-        // Continue without image – article can still be published
+        // Image upload failed: inform the user rather than silently dropping it
       }
     } catch (uploadErr) {
       console.warn('Image upload error:', uploadErr);
@@ -288,18 +288,11 @@ async function publishArticle() {
     }
   }
 
-  // Step 4: Always save to localStorage as fallback (for demo continuity)
-  if (!newArticle.id) {
-    // Generate a local ID if Supabase didn't assign one
-    newArticle.id = 'art-local-' + Date.now();
+  if (!savedToSupabase) {
+    showFormAlert('Article could not be saved to Supabase. Please check your connection and permissions.', 'error');
+    if (publishBtn) { publishBtn.disabled = false; publishBtn.textContent = 'Publish Article'; }
+    return;
   }
-
-  var localArticles = JSON.parse(localStorage.getItem('uniskill_local_articles') || '[]');
-  // Add new article at the beginning so newest is first
-  localArticles.unshift(newArticle);
-  // Keep only the last 50 locally to not overflow storage
-  if (localArticles.length > 50) localArticles = localArticles.slice(0, 50);
-  localStorage.setItem('uniskill_local_articles', JSON.stringify(localArticles));
 
   // Step 5: Show success message and redirect
   showFormAlert('✓ Article published successfully! Redirecting to articles page...', 'success');

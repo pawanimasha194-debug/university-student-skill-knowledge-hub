@@ -303,9 +303,10 @@ async function updateArticle(articleId) {
           updated_at: new Date().toISOString()
         })
         .eq('id', articleId)
-        .eq('user_id', editStudent.id);
+        .eq('user_id', editStudent.id)
+        .select('id');
 
-      if (!updateResult.error) {
+      if (!updateResult.error && updateResult.data && updateResult.data.length) {
         updatedInSupabase = true;
       } else {
         console.warn('Supabase update failed:', updateResult.error);
@@ -315,31 +316,11 @@ async function updateArticle(articleId) {
     }
   }
 
-  // Step 2: Update in localStorage
-  var localArticles = JSON.parse(localStorage.getItem('uniskill_local_articles') || '[]');
-  var found = false;
-  for (var i = 0; i < localArticles.length; i++) {
-    if (localArticles[i].id === articleId) {
-      localArticles[i].title = newTitle;
-      localArticles[i].category = newCategory;
-      localArticles[i].content = newContent;
-      localArticles[i].updated_at = new Date().toISOString();
-      found = true;
-      break;
-    }
+  if (!updatedInSupabase) {
+    showEditAlert('Unable to update article in Supabase. Check ownership and connection.', 'error');
+    if (updateBtn) { updateBtn.disabled = false; updateBtn.textContent = 'Save Changes'; }
+    return;
   }
-
-  // If not in localStorage yet, add it (covers Supabase-only articles)
-  if (!found && articleToEdit) {
-    var updatedCopy = JSON.parse(JSON.stringify(articleToEdit));
-    updatedCopy.title = newTitle;
-    updatedCopy.category = newCategory;
-    updatedCopy.content = newContent;
-    updatedCopy.updated_at = new Date().toISOString();
-    localArticles.unshift(updatedCopy);
-  }
-
-  localStorage.setItem('uniskill_local_articles', JSON.stringify(localArticles));
 
   // Show success and redirect
   showEditAlert('✓ Article updated successfully! Redirecting...', 'success');

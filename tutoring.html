@@ -16,6 +16,8 @@
 <link href="css/dark-mode.css" rel="stylesheet"/> <link href="css/teal-theme.css" rel="stylesheet"/>
 <link href="css/unified-navigation.css" rel="stylesheet"/><link rel="stylesheet" href="css/dark-mode-unified.css">
 <link rel="stylesheet" href="css/simple-modern.css"/>
+<link rel="stylesheet" href="css/tutoring-modal-fix.css"/>
+<link rel="stylesheet" href="css/tutor-subject-select.css"/>
 </head>
 <body>
 <!-- ==============================================================================
@@ -288,6 +290,32 @@
 </form>
 </div>
 </div>
+
+<!-- Become a Campus Tutor: select subjects without browser prompts -->
+<div class="modal-overlay" id="becomeTutorModal" role="dialog" aria-modal="true" aria-labelledby="becomeTutorTitle" aria-hidden="true">
+  <div class="modal-content" style="max-width: 540px;">
+    <button class="modal-close" type="button" onclick="closeBecomeTutorModal()" aria-label="Close">×</button>
+    <h2 id="becomeTutorTitle">Become a Campus Tutor</h2>
+    <p class="tutor-modal-help">Select the subjects you can teach. You can choose more than one.</p>
+    <form id="becomeTutorForm" onsubmit="saveBecomeTutor(event)">
+      <fieldset class="tutor-subject-fieldset"><legend>Academic Subjects <span aria-hidden="true">*</span></legend>
+        <div class="tutor-subject-grid"><label class="tutor-subject-option"><input type="checkbox" name="tutorSubject" value="Statistics & Probability"><span>Statistics & Probability</span></label>
+<label class="tutor-subject-option"><input type="checkbox" name="tutorSubject" value="Calculus & Mathematics"><span>Calculus & Mathematics</span></label>
+<label class="tutor-subject-option"><input type="checkbox" name="tutorSubject" value="Database Systems & SQL"><span>Database Systems & SQL</span></label>
+<label class="tutor-subject-option"><input type="checkbox" name="tutorSubject" value="Python Programming"><span>Python Programming</span></label>
+<label class="tutor-subject-option"><input type="checkbox" name="tutorSubject" value="Bioinformatics"><span>Bioinformatics</span></label>
+<label class="tutor-subject-option"><input type="checkbox" name="tutorSubject" value="Circuit Analysis & MATLAB"><span>Circuit Analysis & MATLAB</span></label></div>
+      </fieldset>
+      <label for="tutorCustomSubjects" class="tutor-input-label">Other subjects (optional)</label>
+      <input class="form-control" id="tutorCustomSubjects" type="text" placeholder="e.g. Operations Management, Java (comma-separated)">
+      <label for="tutorBioInput" class="tutor-input-label">Short introduction (optional)</label>
+      <textarea class="form-control" id="tutorBioInput" rows="3" placeholder="Tell students about your tutoring experience"></textarea>
+      <p id="tutorSubjectError" role="alert" class="tutor-subject-error" hidden></p>
+      <div class="tutor-modal-actions"><button type="button" class="btn btn-secondary" onclick="closeBecomeTutorModal()">Cancel</button><button type="submit" class="btn btn-primary" id="saveTutorBtn">Save Tutor Profile</button></div>
+    </form>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="footer">
 <div class="footer-content">

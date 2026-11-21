@@ -50,85 +50,21 @@ async function loadMyResources() {
   const countBadge = document.getElementById('myTotalCount');
   if (!container) return;
 
-  const currentStudent = getCurrentStudent();
-  const userId = currentStudent ? currentStudent.id : 'demo-student-id-01';
-
-  container.innerHTML = `
-    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-      <div class="spinner" style="border-top-color: var(--primary-color); width: 28px; height: 28px; margin-bottom: 12px;"></div>
-      <p>Loading your learning resources...</p>
-    </div>
-  `;
-
+  const client = window.supabaseClient;
+  container.textContent = 'Loading your learning resources...';
   try {
-    let uploads = [];
-
-    // A. Fetch from Supabase
-    if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient && currentStudent) {
-      try {
-        const { data, error } = await window.supabaseClient
-          .from('resources')
-          .select(`
-            id,
-            user_id,
-            title,
-            description,
-            category_id,
-            file_url,
-            file_name,
-            file_size,
-            created_at,
-            categories ( category_name )
-          `)
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false });
-
-        if (!error && data) {
-          uploads = data.map(item => ({
-            id: item.id,
-            user_id: item.user_id,
-            title: item.title,
-            description: item.description || '',
-            category_id: item.category_id,
-            category_name: item.categories?.category_name || 'General',
-            file_url: item.file_url,
-            file_name: item.file_name,
-            file_size: item.file_size || 'Unknown size',
-            file_type: item.file_name.split('.').pop().toLowerCase(),
-            created_at: item.created_at
-          }));
-        }
-      } catch (err) {
-        console.warn('Could not query Supabase my-resources:', err);
-      }
-    }
-
-    // B. Check localStorage
-    const localUploads = JSON.parse(localStorage.getItem('uniskill_local_resources') || '[]');
-    const myLocalUploads = localUploads.filter(r => r.user_id === userId || !r.user_id);
-
-    // Merge both
-    const map = new Map();
-    [...uploads, ...myLocalUploads].forEach(item => map.set(item.id, item));
-
-    // If empty and current user is Samudi or demo student, include sample to showcase functionality
-    if (map.size === 0 && (currentStudent?.full_name?.includes('Samudi') || !currentStudent)) {
-      map.set('res-sample-01', {
-        id: 'res-sample-01',
-        user_id: userId,
-        title: 'Introduction to Statistics – Week 1 to 5 Lecture Notes',
-        description: 'Comprehensive undergraduate lecture summaries covering probability distributions and hypothesis testing.',
-        category_name: 'Statistics',
-        category_id: 2,
-        file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-        file_name: 'Intro_to_Statistics_Complete_Notes.pdf',
-        file_size: '2.4 MB',
-        file_type: 'pdf',
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-      });
-    }
-
-    myResourcesList = Array.from(map.values());
+    if (!client) throw new Error('Supabase connection unavailable.');
+    const { data: { user }, error: authError } = await client.auth.getUser();
+    if (authError || !user) throw new Error('Please log in to view your resources.');
+    const { data, error } = await client.from('resources')
+      .select('id,user_id,title,description,category_id,file_url,file_name,file_size,created_at,categories(category_name)')
+      .eq('user_id', user.id).order('created_at', { ascending: false });
+    if (error) throw error;
+    myResourcesList = (data || []).map(item => ({
+      ...item,
+      category_name: item.categories?.category_name || 'General',
+      file_type: (item.file_name || '').split('.').pop().toLowerCase()
+    }));
 
     if (countBadge) countBadge.textContent = myResourcesList.length;
 
@@ -176,8 +112,8 @@ async function loadMyResources() {
           <div class="my-resource-actions">
             <!-- Download Button -->
             <a 
-              href="${item.file_url}" 
-              download="${item.file_name}" 
+              href="${escapeHTML(item.file_url)}" 
+              download="${escapeHTML(item.file_name)}" 
               target="_blank" 
               class="btn btn-secondary btn-sm" 
               title="Download file"
@@ -218,6 +154,7 @@ async function loadMyResources() {
 
   } catch (err) {
     console.error('Error in loadMyResources():', err);
+    container.textContent = 'Could not load resources: ' + err.message;
   }
 }
 
@@ -261,32 +198,14 @@ async function handleSaveResourceEdit(e) {
     return;
   }
 
-  // Update in live Supabase if connected
-  if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient) {
-    try {
-      await window.supabaseClient
-        .from('resources')
-        .update({
-          title: title,
-          description: desc,
-          category_id: catId
-        })
-        .eq('id', editingResourceId);
-    } catch (err) {
-      console.warn('Could not update live Supabase resource:', err);
-    }
-  }
-
-  // Update in localStorage
-  const localUploads = JSON.parse(localStorage.getItem('uniskill_local_resources') || '[]');
-  const foundIndex = localUploads.findIndex(r => r.id === editingResourceId);
-  if (foundIndex !== -1) {
-    localUploads[foundIndex].title = title;
-    localUploads[foundIndex].description = desc;
-    localUploads[foundIndex].category_id = catId;
-    localUploads[foundIndex].category_name = catName;
-    localStorage.setItem('uniskill_local_resources', JSON.stringify(localUploads));
-  }
+  const client = window.supabaseClient;
+  if (!client) return alert('Supabase connection unavailable.');
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError || !user) return alert('Please log in again.');
+  const { data, error } = await client.from('resources')
+    .update({ title, description: desc, category_id: catId })
+    .eq('id', editingResourceId).eq('user_id', user.id).select('id');
+  if (error || !data?.length) return alert('Update failed: ' + (error?.message || 'Resource not found or permission denied.'));
 
   // Close modal and refresh list
   const modal = document.getElementById('editResourceModal');
@@ -307,26 +226,34 @@ async function deleteResource(id) {
   if (!confirmed) return;
 
   try {
-    // Delete from Supabase
-    if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient) {
-      await window.supabaseClient
-        .from('resources')
-        .delete()
-        .eq('id', id);
-    }
-
-    // Delete from localStorage
-    const localUploads = JSON.parse(localStorage.getItem('uniskill_local_resources') || '[]');
-    const updated = localUploads.filter(r => r.id !== id);
-    localStorage.setItem('uniskill_local_resources', JSON.stringify(updated));
-
+    const client = window.supabaseClient;
+    if (!client) throw new Error('Supabase connection unavailable.');
+    const { data: { user }, error: authError } = await client.auth.getUser();
+    if (authError || !user) throw new Error('Please log in again.');
+    const item = myResourcesList.find(r => r.id === id);
+    if (!item || item.user_id !== user.id) throw new Error('You cannot delete this resource.');
+    const { data, error } = await client.from('resources').delete()
+      .eq('id', id).eq('user_id', user.id).select('id');
+    if (error || !data?.length) throw new Error(error?.message || 'Delete denied.');
+    // Delete stored file only after the database row was successfully removed.
+    // Storage policy controls whether this authenticated user can remove it.
+    try {
+      const url = new URL(item.file_url);
+      const marker = '/storage/v1/object/public/learning-resources/';
+      const index = url.pathname.indexOf(marker);
+      if (index >= 0) {
+        const path = decodeURIComponent(url.pathname.slice(index + marker.length));
+        const { error: storageError } = await client.storage.from('learning-resources').remove([path]);
+        if (storageError) console.warn('Resource deleted, but storage cleanup failed:', storageError);
+      }
+    } catch (storageException) { console.warn('Storage cleanup skipped:', storageException); }
     alert('Resource deleted successfully.');
-    loadMyResources();
-
+    await loadMyResources();
   } catch (err) {
     console.error('Delete error:', err);
-    alert('Could not delete resource. Please try again.');
+    alert('Could not delete resource: ' + err.message);
   }
+
 }
 
 function getCurrentStudent() {

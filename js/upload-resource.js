@@ -29,25 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Ensures user is authenticated or demo-logged-in
  */
-function checkUserSessionBeforeUpload() {
-  const active = localStorage.getItem('uniskill_active_session');
-  if (!active) {
-    // If not logged in, warn gently or prompt
-    const alertBox = document.getElementById('uploadAlertBox');
-    if (alertBox) {
-      alertBox.style.display = 'block';
-      alertBox.className = 'alert alert-info';
-      alertBox.innerHTML = `Notice: Please <a href="../login.html" style="font-weight: 700;">login</a> to publish resources with your student profile.`;
-    }
-  } else {
-    // Update navbar avatar
-    try {
-      const student = JSON.parse(active).profile || JSON.parse(active).user;
-      const navName = document.getElementById('navUserName');
-      const navAvatar = document.getElementById('navUserAvatar');
-      if (navName && student.full_name) navName.textContent = student.full_name.split(' ')[0];
-      if (navAvatar && student.profile_image) navAvatar.src = student.profile_image;
-    } catch (e) {}
+async function checkUserSessionBeforeUpload() {
+  const alertBox = document.getElementById('uploadAlertBox');
+  const client = window.supabaseClient;
+  if (!client) return;
+  const { data } = await client.auth.getUser();
+  if (!data?.user && alertBox) {
+    alertBox.style.display = 'block';
+    alertBox.className = 'alert alert-info';
+    alertBox.innerHTML = 'Please <a href="../login.html">login</a> to upload resources.';
   }
 }
 
@@ -187,120 +177,58 @@ async function uploadResource(event) {
     return;
   }
 
-  // 3. Get uploader student details
-  const active = localStorage.getItem('uniskill_active_session');
-  let currentStudent = null;
-  if (active) {
-    try {
-      const parsed = JSON.parse(active);
-      currentStudent = parsed.profile || parsed.user;
-    } catch (e) {}
+  // 3. Require a real Supabase Auth session (never use demo identities).
+  const client = window.supabaseClient;
+  if (!client) {
+    showAlert('Supabase connection unavailable. Refresh the page and try again.', 'error');
+    return;
   }
 
-  const userId = currentStudent ? currentStudent.id : 'demo-student-id-01';
-  const uploaderName = currentStudent ? currentStudent.full_name : 'Undergraduate Student';
-  const uploaderFaculty = currentStudent ? currentStudent.faculty : 'Faculty of Science';
-  const uploaderDegree = currentStudent ? currentStudent.degree : 'Undergraduate Degree';
-  const uploaderImage = currentStudent?.profile_image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(uploaderName)}`;
-
-  // 4. Update button to loading state
   setLoading(true);
-
+  let uploadedPath = null;
   try {
-    let fileUrl = '';
+    const { data: authData, error: authError } = await client.auth.getUser();
+    const user = authData?.user;
+    if (authError || !user) throw new Error('Please sign in before uploading a resource.');
+
     const cleanFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const storageFilePath = `resources/${Date.now()}_${cleanFileName}`;
+    const uniqueId = (window.crypto && window.crypto.randomUUID)
+      ? window.crypto.randomUUID()
+      : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    uploadedPath = `${user.id}/${uniqueId}_${cleanFileName}`;
 
-    // --------------------------------------------------------------------------
-    // A. LIVE SUPABASE STORAGE & DATABASE UPLOAD
-    // --------------------------------------------------------------------------
-    if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient) {
-      try {
-        console.log('Uploading file to Supabase Storage bucket `learning-resources`...');
-        
-        // Upload file to Supabase Storage bucket
-        const { data: storageData, error: storageError } = await window.supabaseClient
-          .storage
-          .from('learning-resources')
-          .upload(storageFilePath, file, {
-            cacheControl: '3600',
-            upsert: false
-          });
+    const { error: storageError } = await client.storage
+      .from('learning-resources')
+      .upload(uploadedPath, file, { cacheControl: '3600', upsert: false });
+    if (storageError) throw new Error(`File upload failed: ${storageError.message}`);
 
-        if (storageError) {
-          console.warn('Storage upload notice (bucket might require setup):', storageError.message);
-          // Fallback to sample URL for presentation safety
-          fileUrl = `https://eyqlpfseaikmjipgftji.supabase.co/storage/v1/object/public/learning-resources/${storageFilePath}`;
-        } else {
-          // Get public URL of uploaded file
-          const { data: publicUrlData } = window.supabaseClient
-            .storage
-            .from('learning-resources')
-            .getPublicUrl(storageFilePath);
-            
-          fileUrl = publicUrlData ? publicUrlData.publicUrl : '';
-        }
+    const { data: publicUrlData } = client.storage
+      .from('learning-resources').getPublicUrl(uploadedPath);
+    const fileUrl = publicUrlData?.publicUrl;
+    if (!fileUrl) throw new Error('Unable to generate uploaded file URL.');
 
-        // Insert resource record into Supabase `resources` table
-        const newResourceRecord = {
-          user_id: userId,
-          title: title,
-          description: description,
-          category_id: parseInt(categoryId, 10) || null,
-          file_url: fileUrl || `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`,
-          file_name: file.name,
-          file_size: formatBytes(file.size),
-          created_at: new Date().toISOString()
-        };
-
-        const { error: dbError } = await window.supabaseClient
-          .from('resources')
-          .insert([newResourceRecord]);
-
-        if (dbError) {
-          console.warn('Supabase database insert notice:', dbError.message);
-        }
-
-      } catch (uploadErr) {
-        console.warn('Live upload fallback:', uploadErr);
-      }
-    }
-
-    // --------------------------------------------------------------------------
-    // B. SAVE TO LOCAL STORAGE (Ensures 100% demo continuity across all pages)
-    // --------------------------------------------------------------------------
-    const newLocalResource = {
-      id: 'res_' + Date.now(),
-      user_id: userId,
-      title: title,
-      description: description,
-      category_id: parseInt(categoryId, 10) || 1,
-      category_name: categoryName,
-      faculty: uploaderFaculty,
-      uploader_name: uploaderName,
-      uploader_image: uploaderImage,
-      uploader_degree: uploaderDegree,
-      file_url: fileUrl || `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`,
+    const { error: dbError } = await client.from('resources').insert({
+      user_id: user.id,
+      title,
+      description,
+      category_id: Number(categoryId),
+      file_url: fileUrl,
       file_name: file.name,
-      file_size: formatBytes(file.size),
-      file_type: file.name.split('.').pop().toLowerCase(),
-      created_at: new Date().toISOString()
-    };
+      file_size: formatBytes(file.size)
+    });
+    if (dbError) throw new Error(`Resource could not be saved: ${dbError.message}`);
 
-    const existingLocal = JSON.parse(localStorage.getItem('uniskill_local_resources') || '[]');
-    existingLocal.unshift(newLocalResource);
-    localStorage.setItem('uniskill_local_resources', JSON.stringify(existingLocal));
-
-    // Show Success Message
+    uploadedPath = null; // Persisted: do not clean up the file.
     showAlert('Resource uploaded successfully! Redirecting to resources feed...', 'success');
-
-    // Redirect to resources.html
-    setTimeout(() => {
-      window.location.href = 'resources.html';
-    }, 1500);
-
+    setTimeout(() => { window.location.href = 'resources.html'; }, 1500);
   } catch (err) {
-    showAlert(err.message || 'An error occurred while uploading. Please try again.', 'error');
+    // Best effort cleanup of an uploaded file if database insertion fails.
+    if (uploadedPath) {
+      const { error: cleanupError } = await client.storage
+        .from('learning-resources').remove([uploadedPath]);
+      if (cleanupError) console.warn('Uploaded file cleanup failed:', cleanupError.message);
+    }
+    showAlert(err.message || 'Upload failed. Please try again.', 'error');
   } finally {
     setLoading(false);
   }

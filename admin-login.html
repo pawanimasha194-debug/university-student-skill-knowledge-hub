@@ -1,101 +1,322 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administrator Login – UniSkill Hub</title>
-  <meta name="description" content="Administration portal login for university system managers.">
 
-  <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/login.css">
   <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/dark-mode.css">
+  <link rel="stylesheet" href="css/teal-theme.css">
+  <link rel="stylesheet" href="css/dark-mode-unified.css">
 
-  <!-- Supabase JS Client v2 from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="css/dark-mode.css">  <link rel="stylesheet" href="css/teal-theme.css">
-<link rel="stylesheet" href="css/dark-mode-unified.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/supabase-config.js"></script>
+  <script defer src="js/theme.js"></script>
+
+  <style>
+    .admin-login-wrapper {
+      min-height: calc(100vh - 160px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .admin-login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card, #fff);
+      border: 1px solid var(--border-color, #dce5e5);
+      border-radius: 12px;
+      padding: 34px;
+      box-shadow: 0 6px 25px rgba(0,0,0,.05);
+    }
+
+    .admin-login-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .admin-badge-icon {
+      font-size: 30px;
+      margin-bottom: 14px;
+    }
+
+    .admin-login-card .form-group {
+      margin-bottom: 20px;
+    }
+
+    .admin-login-card .form-control {
+      width: 100%;
+    }
+
+    .admin-login-alert {
+      padding: 12px;
+      border-radius: 7px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .admin-login-alert.error {
+      display: block;
+      background: #fff0f0;
+      color: #b42318;
+      border: 1px solid #ffcccc;
+    }
+
+    .admin-login-alert.success {
+      display: block;
+      background: #eaf8f1;
+      color: #087443;
+      border: 1px solid #b7e4cb;
+    }
+
+    .admin-submit {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .admin-submit:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+  </style>
 </head>
+
 <body>
 
-  <!-- Minimal Header Bar -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-logo" title="UniSkill Hub Home">
-        <span class="logo-badge">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.45 9L12 4.34 20.55 9 12 13.66 3.45 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
-          </svg>
+      <a href="index.html" class="nav-logo">
+        <span class="logo-badge">🎓</span>
+        <span class="logo-text">
+          UniSkill<span>Hub</span>
+          <small style="font-size:11px;">
+            [ADMIN PORTAL]
+          </small>
         </span>
-        <span class="logo-text">UniSkill<span>Hub</span> <small style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-left: 6px;">[ADMIN PORTAL]</small></span>
       </a>
 
-      <div style="font-size: 13px;">
-        <a href="index.html" style="font-weight: 600;">&larr; Back to Student Platform</a>
-      </div>
+      <a href="index.html">
+        ← Back to Student Platform
+      </a>
     </div>
   </header>
 
-  <!-- Login Card Container -->
   <main class="admin-login-wrapper">
-    
+
     <div class="admin-login-card">
+
       <div class="admin-login-header">
         <div class="admin-badge-icon">🛡️</div>
-        <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Admin Sign In</h2>
-        <p style="font-size: 13px; color: var(--text-muted);">Access system statistics, user directories, and content management.</p>
+        <h2>Admin Sign In</h2>
+        <p>
+          Sign in with your authorized
+          UniSkill Hub administrator account.
+        </p>
       </div>
 
-      <div id="adminLoginAlert" class="alert alert-error" style="display: none; font-size: 12.5px;"></div>
+      <div
+        id="adminLoginAlert"
+        class="admin-login-alert"
+        role="alert"
+        aria-live="polite">
+      </div>
 
-      <form id="adminLoginForm" onsubmit="adminLogin(event)">
-        
-        <div class="form-group">
-          <label class="form-label" for="adminEmail">Administrator Email</label>
-          <input 
-            type="email" 
-            id="adminEmail" 
-            class="form-control" 
-            placeholder="admin@uniskill.lk" 
-            value="admin@uniskill.lk"
-            required
-          >
-        </div>
+      <form id="adminLoginForm">
 
         <div class="form-group">
-          <label class="form-label" for="adminPassword">Security Key / Password</label>
-          <input 
-            type="password" 
-            id="adminPassword" 
-            class="form-control" 
-            placeholder="••••••••" 
-            value="admin123"
-            required
-          >
-          <span class="form-hint">Default academic evaluation key: admin123</span>
+          <label class="form-label" for="adminEmail">
+            Administrator Email
+          </label>
+
+          <input
+            type="email"
+            id="adminEmail"
+            class="form-control"
+            placeholder="admin@uniskill.lk"
+            autocomplete="username"
+            required>
         </div>
 
-        <div style="margin-top: 24px;">
-          <button type="submit" class="btn btn-primary btn-block">Sign In to Dashboard</button>
+        <div class="form-group">
+          <label class="form-label" for="adminPassword">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="adminPassword"
+            class="form-control"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required>
         </div>
+
+        <button
+          type="submit"
+          id="adminLoginBtn"
+          class="btn btn-primary btn-block admin-submit">
+          Sign In to Dashboard
+        </button>
 
       </form>
+
     </div>
 
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <span>© 2026 UniSkill Hub – System Administration Console</span>
-      <div class="footer-links">
-        <a href="index.html">Student Portal</a>
-        <a href="dashboard.html">Dashboard</a>
-      </div>
+      <span>
+        © 2026 UniSkill Hub – Administration Console
+      </span>
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="js/admin.js"></script>
-<script src="js/theme.js"></script></body>
+  <script>
+    (function () {
+      "use strict";
+
+      const form = document.getElementById("adminLoginForm");
+      const alertBox = document.getElementById("adminLoginAlert");
+      const loginBtn = document.getElementById("adminLoginBtn");
+
+      function showAlert(message, type = "error") {
+        alertBox.textContent = message;
+        alertBox.className = "admin-login-alert " + type;
+      }
+
+      function setLoading(loading) {
+        loginBtn.disabled = loading;
+        loginBtn.textContent = loading
+          ? "Signing in..."
+          : "Sign In to Dashboard";
+      }
+
+      function getSupabaseClient() {
+        // Supports the common client names used by
+        // different versions of supabase-config.js.
+        const candidates = [
+          window.supabaseClient,
+          window.supabaseDB,
+          window.sb
+        ];
+
+        for (const client of candidates) {
+          if (
+            client &&
+            client.auth &&
+            typeof client.auth.signInWithPassword === "function" &&
+            typeof client.from === "function"
+          ) {
+            return client;
+          }
+        }
+
+        return null;
+      }
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const email = document
+          .getElementById("adminEmail")
+          .value.trim();
+
+        const password = document
+          .getElementById("adminPassword")
+          .value;
+
+        const client = getSupabaseClient();
+
+        if (!client) {
+          showAlert(
+            "Supabase client was not initialized. Check js/supabase-config.js."
+          );
+          return;
+        }
+
+        setLoading(true);
+        alertBox.style.display = "none";
+
+        try {
+          const { data, error } =
+            await client.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
+
+          if (error) {
+            throw error;
+          }
+
+          if (!data || !data.user) {
+            throw new Error(
+              "Authentication failed. No user was returned."
+            );
+          }
+
+          const { data: admin, error: roleError } =
+            await client
+              .from("faculty_admins")
+              .select("role, faculty")
+              .eq("user_id", data.user.id)
+              .maybeSingle();
+
+          if (roleError) {
+            console.error(
+              "Admin role verification error:",
+              roleError
+            );
+
+            throw new Error(
+              "Could not verify admin permission. Check the faculty_admins table and its RLS policies."
+            );
+          }
+
+          const allowedRoles = [
+            "super_admin",
+            "faculty_admin"
+          ];
+
+          if (
+            !admin ||
+            !allowedRoles.includes(admin.role)
+          ) {
+            await client.auth.signOut();
+
+            throw new Error(
+              "Access denied. This account does not have administrator permission."
+            );
+          }
+
+          showAlert(
+            "Admin login successful. Redirecting...",
+            "success"
+          );
+
+          window.location.replace("admin-dashboard.html");
+
+        } catch (error) {
+          console.error("Admin login error:", error);
+
+          showAlert(
+            error.message || "Unable to sign in."
+          );
+
+        } finally {
+          setLoading(false);
+        }
+      });
+
+    })();
+  </script>
+
+</body>
 </html>

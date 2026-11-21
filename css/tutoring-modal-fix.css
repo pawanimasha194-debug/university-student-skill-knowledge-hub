@@ -1,0 +1,63 @@
+/* UniSkill Hub — tutoring modals. Scoped to this page's two dialogs. */
+#bookSessionModal.modal-overlay,
+#tutorReviewModal.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(10, 25, 30, .65);
+  padding: 20px;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+}
+#bookSessionModal.modal-overlay.active,
+#tutorReviewModal.modal-overlay.active { display: flex; }
+#bookSessionModal .modal-content,
+#tutorReviewModal .modal-content {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  margin: auto;
+  padding: 28px;
+  border-radius: 14px;
+  background: var(--card-bg, var(--bg-card, #fff));
+  color: var(--text-primary, #17343a);
+  box-shadow: 0 18px 60px rgba(0,0,0,.25);
+}
+#bookSessionModal .modal-close,
+#tutorReviewModal .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+#bookSessionModal .form-control,
+#tutorReviewModal .form-control {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #ccd7d9);
+  border-radius: 8px;
+  background: var(--input-bg, var(--card-bg, #fff));
+  color: var(--text-primary, #17343a);
+}
+#bookSessionModal .availability-slots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (max-width: 600px) {
+  #bookSessionModal.modal-overlay,
+  #tutorReviewModal.modal-overlay { padding: 10px; }
+  #bookSessionModal .modal-content,
+  #tutorReviewModal .modal-content { padding: 22px 16px; max-height: calc(100vh - 20px); }
+}

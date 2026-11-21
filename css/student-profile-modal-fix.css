@@ -1,0 +1,6 @@
+/* Only the endorsement popup on public student profiles. */
+#endorseSkillModal.modal-overlay {display:none;position:fixed;inset:0;z-index:10030;background:rgba(10,25,30,.64);padding:20px;overflow-y:auto;align-items:center;justify-content:center;box-sizing:border-box}
+#endorseSkillModal.modal-overlay.active {display:flex}
+#endorseSkillModal .modal-content {position:relative;width:min(100%,460px);max-height:calc(100vh - 40px);overflow-y:auto;background:var(--card-bg,var(--bg-card,#fff));color:var(--text-primary,#172b2b);border-radius:14px;padding:24px;box-shadow:0 20px 65px rgba(0,0,0,.25);box-sizing:border-box}
+#endorseSkillModal .modal-close {position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:25px;cursor:pointer;color:inherit}
+#endorseSkillModal textarea {width:100%;box-sizing:border-box}

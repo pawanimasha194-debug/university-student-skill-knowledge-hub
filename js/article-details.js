@@ -123,6 +123,18 @@ async function loadArticle(articleId) {
   // Store globally so like/comment functions can use it
   currentArticle = foundArticle;
 
+  // Fetch actual likes before rendering the detail page.
+  try {
+    const client = window.supabaseClient;
+    const [likes, auth] = await Promise.all([
+      client.from('article_likes').select('user_id').eq('article_id', articleId),
+      client.auth.getUser()
+    ]);
+    if (likes.error) throw likes.error;
+    foundArticle.likes_count = likes.data.length;
+    foundArticle.is_liked = !!(auth.data && auth.data.user && likes.data.some(l => l.user_id === auth.data.user.id));
+  } catch (e) { console.error('Could not load article likes:', e); }
+
   // Render the article
   renderArticleDetail(foundArticle);
 
@@ -148,7 +160,7 @@ function renderArticleDetail(article) {
 
   // Get like state for this article
   var likedSet = getLikedArticles(student ? (student.id || 'guest') : 'guest');
-  var isLiked = likedSet.has(article.id);
+  var isLiked = !!article.is_liked;
   var likeClass = isLiked ? 'feed-action-btn like-btn liked' : 'feed-action-btn like-btn';
   var likeCount = article.likes_count || 0;
 
@@ -323,20 +335,8 @@ async function loadComments(articleId) {
     }
   }
 
-  // Step 2: Merge with localStorage comments
-  var localComments = JSON.parse(localStorage.getItem('uniskill_article_comments_' + articleId) || '[]');
-
-  // Combine both sources, deduplicate by id
-  var commentMap = new Map();
-  liveComments.forEach(function(c) { commentMap.set(c.id, c); });
-  localComments.forEach(function(c) { commentMap.set(c.id, c); });
-
-  var allComments = Array.from(commentMap.values());
-
-  // Sort by oldest first so the conversation flows naturally
-  allComments.sort(function(a, b) {
-    return new Date(a.created_at) - new Date(b.created_at);
-  });
+  // Only database comments are shown. No browser-local fallback.
+  var allComments = liveComments;
 
   // Render comments
   renderComments(allComments, articleId);
@@ -410,45 +410,24 @@ async function addComment(articleId) {
     submitBtn.textContent = 'Posting...';
   }
 
-  // Build the comment object
-  var newComment = {
-    id: 'cmt-local-' + Date.now(),
-    article_id: articleId,
-    comment: commentText,
-    user_id: detailStudent ? detailStudent.id : null,
-    created_at: new Date().toISOString(),
-    author_name: detailStudent ? (detailStudent.full_name || 'Student') : 'Student',
-    author_image: detailStudent ? (detailStudent.profile_image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=student') : 'https://api.dicebear.com/7.x/avataaars/svg?seed=student',
-    author_faculty: detailStudent ? (detailStudent.faculty || 'University') : 'University'
-  };
-
-  // Step 1: Try to save to Supabase
-  if (window.supabaseClient && window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && detailStudent && detailStudent.id && detailStudent.id !== 'guest_user') {
-    try {
-      var insertResult = await window.supabaseClient
-        .from('article_comments')
-        .insert({
-          article_id: articleId,
-          user_id: detailStudent.id,
-          comment: commentText
-        })
-        .select()
-        .single();
-
-      if (!insertResult.error && insertResult.data) {
-        // Use Supabase-generated ID
-        newComment.id = insertResult.data.id;
-      }
-    } catch (e) {
-      console.warn('Comment save to Supabase failed:', e);
-    }
+  // A successful Supabase insert is required before showing success.
+  try {
+    if (!window.supabaseClient) throw new Error('Supabase connection is unavailable.');
+    const { data: authData, error: authError } = await window.supabaseClient.auth.getUser();
+    if (authError) throw authError;
+    if (!authData || !authData.user) throw new Error('Please sign in to comment.');
+    const { error } = await window.supabaseClient.from('article_comments').insert({
+      article_id: articleId,
+      user_id: authData.user.id,
+      comment: commentText
+    });
+    if (error) throw error;
+  } catch (e) {
+    console.error('Article comment failed:', e);
+    alert('Comment could not be saved: ' + e.message);
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Post Comment'; }
+    return;
   }
-
-  // Step 2: Save to localStorage
-  var localKey = 'uniskill_article_comments_' + articleId;
-  var localComments = JSON.parse(localStorage.getItem(localKey) || '[]');
-  localComments.push(newComment);
-  localStorage.setItem(localKey, JSON.stringify(localComments));
 
   // Step 3: Clear the input and re-enable submit button
   commentInput.value = '';
@@ -469,23 +448,19 @@ async function deleteArticle(articleId) {
   var confirmed = confirm('Are you sure you want to delete this article? This action cannot be undone.');
   if (!confirmed) return;
 
-  // Try to delete from Supabase
-  if (window.supabaseClient && window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && detailStudent && detailStudent.id) {
-    try {
-      await window.supabaseClient
-        .from('articles')
-        .delete()
-        .eq('id', articleId)
-        .eq('user_id', detailStudent.id);
-    } catch (e) {
-      console.warn('Delete from Supabase failed:', e);
-    }
+  if (!window.supabaseClient || !detailStudent || !detailStudent.id) {
+    alert('Please sign in to delete your article.');
+    return;
   }
-
-  // Delete from localStorage
-  var localArticles = JSON.parse(localStorage.getItem('uniskill_local_articles') || '[]');
-  localArticles = localArticles.filter(function(art) { return art.id !== articleId; });
-  localStorage.setItem('uniskill_local_articles', JSON.stringify(localArticles));
+  try {
+    const { data, error } = await window.supabaseClient.from('articles')
+      .delete().eq('id', articleId).eq('user_id', detailStudent.id).select('id');
+    if (error) throw error;
+    if (!data || !data.length) throw new Error('Article not found or you do not own it.');
+  } catch (e) {
+    alert('Delete failed: ' + e.message);
+    return;
+  }
 
   alert('Article deleted successfully.');
   window.location.href = 'my-articles.html';

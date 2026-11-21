@@ -19,167 +19,75 @@ let filteredQuestions = [];
 let currentQuestionCategory = 'all';
 let questionSearchQuery = '';
 
-// Default sample questions for demonstration
-const defaultSampleQuestions = [
-  {
-    id: 'q-sample-01',
-    user_id: 'usr_malith_04',
-    author_name: 'Malith Jayasuriya',
-    author_faculty: 'Faculty of Engineering',
-    author_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-    title: 'How do you determine whether a graph has an Eulerian path vs an Eulerian circuit?',
-    description: 'During yesterday’s discrete structures lecture, we discussed Euler paths. I understand that an Eulerian circuit visits every edge once and starts/ends at the same vertex, but what is the exact degree condition for an Euler path where start != end? Worked examples would be deeply appreciated!',
-    category: 'Mathematics',
-    created_at: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
-    answers_count: 2
-  },
-  {
-    id: 'q-sample-02',
-    user_id: 'usr_ananya_05',
-    author_name: 'Ananya Sharma',
-    author_faculty: 'Faculty of Computing & Technology',
-    author_image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
-    title: 'Recommended dataset sources for undergraduate Machine Learning final year projects?',
-    description: 'Our project group is working on credit card fraud detection and customer churn modeling. Aside from the standard Kaggle datasets, are there university repositories or local Sri Lankan financial datasets available for academic research?',
-    category: 'Programming',
-    created_at: new Date(Date.now() - 12 * 3600 * 1000).toISOString(),
-    answers_count: 3
-  },
-  {
-    id: 'q-sample-03',
-    user_id: 'usr_samudi_01',
-    author_name: 'Samudi Wijesinghe',
-    author_faculty: 'Faculty of Applied Sciences',
-    author_image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
-    title: 'Difference between Type I and Type II errors in hypothesis testing?',
-    description: 'Freshmen in our tutoring circle often confuse rejecting a true null hypothesis vs failing to reject a false null hypothesis. What is the most memorable mnemonic or real-world analogy to remember alpha and beta errors?',
-    category: 'Statistics',
-    created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-    answers_count: 4
-  },
-  {
-    id: 'q-sample-04',
-    user_id: 'usr_dinuka_06',
-    author_name: 'Dinuka Senanayake',
-    author_faculty: 'Faculty of Management Studies',
-    author_image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-    title: 'Best approach for 3NF table decomposition when partial dependencies exist?',
-    description: 'If a relational schema has composite keys and partial functional dependencies, should we always transition through 2NF before attempting 3NF, or can we directly eliminate transitive dependencies?',
-    category: 'Database',
-    created_at: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
-    answers_count: 1
-  }
-];
-
-// Default sample answers
-const defaultSampleAnswers = [
-  {
-    id: 'ans-sample-01',
-    question_id: 'q-sample-01',
-    user_id: 'usr_kaveen_02',
-    author_name: 'Kaveen Perera',
-    author_image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&q=80',
-    answer: 'An undirected graph has an **Eulerian path** if and only if exactly 2 vertices have an ODD degree, and all other vertices have an EVEN degree. The path must start at one odd-degree vertex and end at the other odd-degree vertex. If all vertices have EVEN degree, it is an **Eulerian circuit**!',
-    created_at: new Date(Date.now() - 2 * 3600 * 1000).toISOString()
-  },
-  {
-    id: 'ans-sample-02',
-    question_id: 'q-sample-01',
-    user_id: 'usr_samudi_01',
-    author_name: 'Samudi Wijesinghe',
-    author_image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
-    answer: 'Also remember to check that all vertices with non-zero degree belong to a single connected component! Otherwise the path condition fails regardless of degrees.',
-    created_at: new Date(Date.now() - 1 * 3600 * 1000).toISOString()
-  },
-  {
-    id: 'ans-sample-03',
-    question_id: 'q-sample-03',
-    user_id: 'usr_tharushi_03',
-    author_name: 'Tharushi Fernando',
-    author_image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
-    answer: 'The boy who cried wolf analogy is classic: \n- Type I Error (False Positive): The villagers believe there is a wolf when there is no wolf (Alpha).\n- Type II Error (False Negative): The villagers believe there is no wolf when there is actually a wolf (Beta).',
-    created_at: new Date(Date.now() - 20 * 3600 * 1000).toISOString()
-  }
-];
-
-// Helper to get active student
-function getActiveStudent() {
-  if (typeof getCurrentStudent === 'function') {
-    return getCurrentStudent();
-  }
-  const sessionStr = localStorage.getItem('uniskill_active_session');
-  if (sessionStr) {
-    try {
-      const parsed = JSON.parse(sessionStr);
-      return parsed.profile || parsed.user || null;
-    } catch (e) {}
-  }
-  return {
-    id: 'guest_user',
-    full_name: 'Student User',
-    faculty: 'Faculty of Science',
-    degree: 'BSc Computer Science',
-    profile_image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=student'
-  };
+// Community data is loaded exclusively from Supabase; no demo/localStorage questions.
+function communityClient() {
+  const client = window.supabaseClient;
+  if (!client) throw new Error('Supabase is not available. Refresh the page.');
+  return client;
 }
 
-// ------------------------------------------------------------------------------
-// 1. loadQuestions()
-// Loads community questions from Supabase and local storage
-// ------------------------------------------------------------------------------
+async function communityUser() {
+  const { data, error } = await communityClient().auth.getUser();
+  if (error) throw error;
+  if (!data?.user) throw new Error('Please log in to use Community Q&A.');
+  return data.user;
+}
+
+function getActiveStudent() {
+  if (typeof getCurrentStudent === 'function') {
+    try { return getCurrentStudent(); } catch (_) {}
+  }
+  try {
+    const session = JSON.parse(localStorage.getItem('uniskill_active_session') || 'null');
+    return session?.profile || session?.user || null;
+  } catch (_) { return null; }
+}
+
+function communityAvatar(profile, seed) {
+  const url = profile?.profile_image;
+  if (typeof url === 'string' && /^https:\/\//i.test(url)) return url.replace(/"/g, '&quot;');
+  return 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(seed || 'student');
+}
+
+async function communityProfiles(userIds) {
+  const unique = [...new Set(userIds.filter(Boolean))];
+  if (!unique.length) return {};
+  const { data, error } = await communityClient().from('profiles')
+    .select('id, full_name, faculty, profile_image').in('id', unique);
+  if (error) {
+    console.warn('Community profiles could not be loaded:', error.message);
+    return {};
+  }
+  return Object.fromEntries((data || []).map(p => [p.id, p]));
+}
+
 async function loadQuestions() {
   const container = document.getElementById('questionsFeedContainer');
   if (!container) return;
-
-  container.innerHTML = '<div class="spinner-wrapper"><div class="spinner"></div><p style="margin-top: 10px; color: var(--text-muted); font-size: 13px;">Loading community discussions...</p></div>';
-
-  let liveQuestions = [];
-  if (window.supabaseClient && window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured()) {
-    try {
-      const { data, error } = await window.supabaseClient
-        .from('questions')
-        .select('id, user_id, title, description, category, created_at, profiles:user_id(full_name, faculty, profile_image)')
-        .order('created_at', { ascending: false });
-
-      if (!error && data && data.length > 0) {
-        liveQuestions = data.map(q => ({
-          id: q.id,
-          user_id: q.user_id,
-          author_name: q.profiles?.full_name || 'Student',
-          author_faculty: q.profiles?.faculty || 'Faculty of Science',
-          author_image: q.profiles?.profile_image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(q.title)}`,
-          title: q.title,
-          description: q.description,
-          category: q.category,
-          created_at: q.created_at,
-          answers_count: 0
-        }));
-      }
-    } catch (e) {
-      console.warn('Questions Supabase fetch warning:', e);
-    }
+  container.innerHTML = '<div class="spinner-wrapper"><div class="spinner"></div><p>Loading community discussions...</p></div>';
+  try {
+    await communityUser();
+    const client = communityClient();
+    const { data: questions, error } = await client.from('questions')
+      .select('id, user_id, title, description, category, created_at')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    const profiles = await communityProfiles((questions || []).map(q => q.user_id));
+    const { data: answers, error: answersError } = await client.from('answers').select('question_id');
+    if (answersError) throw answersError;
+    const counts = {};
+    (answers || []).forEach(a => { counts[a.question_id] = (counts[a.question_id] || 0) + 1; });
+    allQuestions = (questions || []).map(q => {
+      const profile = profiles[q.user_id];
+      return { ...q, author_name: profile?.full_name || 'Student',
+        author_faculty: profile?.faculty || 'University Student',
+        author_image: communityAvatar(profile, q.user_id), answers_count: counts[q.id] || 0 };
+    });
+    searchCommunity();
+  } catch (error) {
+    console.error('Community questions load failed:', error);
+    container.innerHTML = '<div class="empty-state-box">Unable to load questions: ' + escapeHTML(error.message || 'Unknown error') + '</div>';
   }
-
-  // Merge with locally stored questions and default samples
-  const localQuestions = JSON.parse(localStorage.getItem('uniskill_questions') || '[]');
-  const qMap = new Map();
-
-  defaultSampleQuestions.forEach(q => qMap.set(q.id, q));
-  liveQuestions.forEach(q => qMap.set(q.id, q));
-  localQuestions.forEach(q => qMap.set(q.id, q));
-
-  allQuestions = Array.from(qMap.values());
-  allQuestions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-  // Compute live answers count from answers storage
-  const localAnswers = JSON.parse(localStorage.getItem('uniskill_answers') || '[]');
-  allQuestions.forEach(q => {
-    const ansList = [...defaultSampleAnswers, ...localAnswers].filter(a => a.question_id === q.id);
-    q.answers_count = ansList.length;
-  });
-
-  filteredQuestions = [...allQuestions];
-  renderQuestionsFeed(container, filteredQuestions);
 }
 
 // ------------------------------------------------------------------------------
@@ -204,7 +112,7 @@ function renderQuestionsFeed(container, questions) {
   let html = '';
   questions.forEach(q => {
     const timeText = formatTimeAgoCommunity(q.created_at);
-    const snippet = (q.description || '').substring(0, 220) + (q.description.length > 220 ? '...' : '');
+    const snippet = (q.description || '').substring(0, 220) + ((q.description || '').length > 220 ? '...' : '');
 
     html += `
       <div class="question-card" id="q-${q.id}">
@@ -242,9 +150,9 @@ function searchCommunity(query) {
 
   filteredQuestions = allQuestions.filter(q => {
     if (questionSearchQuery) {
-      const matchTitle = q.title.toLowerCase().includes(questionSearchQuery);
-      const matchDesc = q.description.toLowerCase().includes(questionSearchQuery);
-      const matchAuthor = q.author_name.toLowerCase().includes(questionSearchQuery);
+      const matchTitle = (q.title || '').toLowerCase().includes(questionSearchQuery);
+      const matchDesc = (q.description || '').toLowerCase().includes(questionSearchQuery);
+      const matchAuthor = (q.author_name || '').toLowerCase().includes(questionSearchQuery);
       if (!matchTitle && !matchDesc && !matchAuthor) return false;
     }
 
@@ -274,199 +182,103 @@ async function postQuestion() {
   const titleEl = document.getElementById('questionTitle');
   const catEl = document.getElementById('questionCategory');
   const descEl = document.getElementById('questionDescription');
-
   if (!titleEl || !catEl || !descEl) return;
-
-  const title = titleEl.value.trim();
-  const category = catEl.value;
-  const description = descEl.value.trim();
-
-  // Validation
-  if (title.length < 8) {
-    alert('Please enter a descriptive question title (at least 8 characters).');
-    titleEl.focus();
-    return;
+  const title = titleEl.value.trim(), category = catEl.value, description = descEl.value.trim();
+  if (title.length < 8) { alert('Please enter a descriptive question title (at least 8 characters).'); titleEl.focus(); return; }
+  if (!category) { alert('Please select a category for your question.'); catEl.focus(); return; }
+  if (description.length < 20) { alert('Please provide additional context or description (at least 20 characters).'); descEl.focus(); return; }
+  try {
+    const user = await communityUser();
+    const { error } = await communityClient().from('questions').insert({
+      user_id: user.id, title, description, category
+    });
+    if (error) throw error;
+    alert('Question posted successfully to the community!');
+    window.location.href = 'community.html';
+  } catch (error) {
+    console.error('Question publishing failed:', error);
+    alert('Question was not saved: ' + (error.message || 'Unknown error'));
   }
-  if (!category) {
-    alert('Please select a category for your question.');
-    catEl.focus();
-    return;
-  }
-  if (description.length < 20) {
-    alert('Please provide additional context or description (at least 20 characters).');
-    descEl.focus();
-    return;
-  }
-
-  const current = getActiveStudent();
-  const newQuestion = {
-    id: 'q-' + Date.now(),
-    user_id: current.id,
-    author_name: current.full_name || 'Student',
-    author_faculty: current.faculty || 'Faculty of Science',
-    author_image: current.profile_image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=student',
-    title: title,
-    description: description,
-    category: category,
-    created_at: new Date().toISOString(),
-    answers_count: 0
-  };
-
-  // Try Supabase insert
-  if (window.supabaseClient && window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && current.id !== 'guest_user') {
-    try {
-      await window.supabaseClient.from('questions').insert({
-        user_id: current.id,
-        title: title,
-        description: description,
-        category: category
-      });
-    } catch (e) {
-      console.warn('Supabase post question warning:', e);
-    }
-  }
-
-  // Persist locally
-  const localQuestions = JSON.parse(localStorage.getItem('uniskill_questions') || '[]');
-  localQuestions.unshift(newQuestion);
-  localStorage.setItem('uniskill_questions', JSON.stringify(localQuestions));
-
-  alert('Question posted successfully to the community!');
-  window.location.href = 'community.html';
 }
 
-// ------------------------------------------------------------------------------
-// 3. loadQuestionDetails() & loadAnswers()
-// Used in question-details.html
-// ------------------------------------------------------------------------------
 async function loadQuestionDetails() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const qId = urlParams.get('id');
-
-  if (!qId) {
-    window.location.href = 'community.html';
-    return;
+  const qId = new URLSearchParams(window.location.search).get('id');
+  if (!qId) { window.location.href = 'community.html'; return; }
+  try {
+    await communityUser();
+    const { data: question, error } = await communityClient().from('questions')
+      .select('id, user_id, title, description, category, created_at').eq('id', qId).maybeSingle();
+    if (error) throw error;
+    if (!question) throw new Error('Question not found.');
+    const profiles = await communityProfiles([question.user_id]);
+    const profile = profiles[question.user_id];
+    const fields = {
+      detailQuestionTitle: question.title, detailQuestionCategory: question.category,
+      detailQuestionBody: question.description, detailAuthorName: profile?.full_name || 'Student',
+      detailAuthorFaculty: profile?.faculty || 'University Student',
+      detailQuestionTime: formatTimeAgoCommunity(question.created_at)
+    };
+    Object.entries(fields).forEach(([id, value]) => {
+      const el = document.getElementById(id); if (el) el.textContent = value;
+    });
+    const img = document.getElementById('detailAuthorImage');
+    if (img) img.src = communityAvatar(profile, question.user_id);
+    await loadAnswers(qId);
+  } catch (error) {
+    console.error('Question details load failed:', error);
+    alert('Unable to load question: ' + (error.message || 'Unknown error'));
   }
-
-  const localQuestions = JSON.parse(localStorage.getItem('uniskill_questions') || '[]');
-  const allKnown = [...localQuestions, ...defaultSampleQuestions];
-  const question = allKnown.find(q => q.id === qId);
-
-  if (!question) {
-    alert('Question not found.');
-    window.location.href = 'community.html';
-    return;
-  }
-
-  const titleEl = document.getElementById('detailQuestionTitle');
-  const catEl = document.getElementById('detailQuestionCategory');
-  const bodyEl = document.getElementById('detailQuestionBody');
-  const authorNameEl = document.getElementById('detailAuthorName');
-  const authorFacultyEl = document.getElementById('detailAuthorFaculty');
-  const authorImgEl = document.getElementById('detailAuthorImage');
-  const timeEl = document.getElementById('detailQuestionTime');
-
-  if (titleEl) titleEl.textContent = question.title;
-  if (catEl) catEl.textContent = question.category;
-  if (bodyEl) bodyEl.textContent = question.description;
-  if (authorNameEl) authorNameEl.textContent = question.author_name;
-  if (authorFacultyEl) authorFacultyEl.textContent = question.author_faculty;
-  if (authorImgEl) authorImgEl.src = question.author_image;
-  if (timeEl) timeEl.textContent = formatTimeAgoCommunity(question.created_at);
-
-  await loadAnswers(qId);
 }
 
 async function loadAnswers(qId) {
-  const answersContainer = document.getElementById('answersListContainer');
+  const container = document.getElementById('answersListContainer');
   const countEl = document.getElementById('answersCountHeader');
-  if (!answersContainer) return;
-
-  const localAnswers = JSON.parse(localStorage.getItem('uniskill_answers') || '[]');
-  const allAns = [...defaultSampleAnswers, ...localAnswers].filter(a => a.question_id === qId);
-
-  if (countEl) countEl.textContent = `${allAns.length} Answers`;
-
-  if (allAns.length === 0) {
-    answersContainer.innerHTML = `
-      <div class="empty-state-box" style="padding: 24px;">
-        <div class="empty-state-desc">No answers posted yet. Share your insights to help this student!</div>
-      </div>
-    `;
-    return;
+  if (!container) return;
+  try {
+    const { data: answers, error } = await communityClient().from('answers')
+      .select('id, question_id, user_id, answer, created_at')
+      .eq('question_id', qId).order('created_at', { ascending: true });
+    if (error) throw error;
+    const profiles = await communityProfiles((answers || []).map(a => a.user_id));
+    if (countEl) countEl.textContent = `${(answers || []).length} Answers`;
+    if (!answers?.length) {
+      container.innerHTML = '<div class="empty-state-box" style="padding:24px"><div class="empty-state-desc">No answers posted yet. Share your insights to help this student!</div></div>';
+      return;
+    }
+    container.innerHTML = answers.map(ans => {
+      const profile = profiles[ans.user_id];
+      const name = profile?.full_name || 'Student';
+      return `<div class="answer-item"><div class="answer-header">
+        <img src="${communityAvatar(profile, ans.user_id)}" alt="${escapeHTML(name)}" class="answer-avatar" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=peer'">
+        <div><div style="font-weight:700;font-size:13.5px">${escapeHTML(name)}</div>
+        <div style="font-size:11.5px;color:var(--text-subtle)">${formatTimeAgoCommunity(ans.created_at)}</div></div></div>
+        <div class="answer-content">${escapeHTML(ans.answer)}</div></div>`;
+    }).join('');
+  } catch (error) {
+    console.error('Answers load failed:', error);
+    container.textContent = 'Unable to load answers: ' + (error.message || 'Unknown error');
   }
-
-  let html = '';
-  allAns.forEach(ans => {
-    html += `
-      <div class="answer-item">
-        <div class="answer-header">
-          <img src="${ans.author_image}" alt="${escapeHTML(ans.author_name)}" class="answer-avatar" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=peer'">
-          <div>
-            <div style="font-weight: 700; font-size: 13.5px;">${escapeHTML(ans.author_name)}</div>
-            <div style="font-size: 11.5px; color: var(--text-subtle);">${formatTimeAgoCommunity(ans.created_at)}</div>
-          </div>
-        </div>
-        <div class="answer-content">${escapeHTML(ans.answer)}</div>
-      </div>
-    `;
-  });
-
-  answersContainer.innerHTML = html;
 }
 
-// ------------------------------------------------------------------------------
-// 4. submitAnswer()
-// Submits a reply in question-details.html
-// ------------------------------------------------------------------------------
 async function submitAnswer() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const qId = urlParams.get('id');
+  const qId = new URLSearchParams(window.location.search).get('id');
   const answerInput = document.getElementById('replyTextInput');
-
   if (!answerInput || !qId) return;
-
-  const text = answerInput.value.trim();
-  if (text.length < 5) {
-    alert('Please enter an answer with at least 5 characters.');
-    answerInput.focus();
-    return;
+  const answer = answerInput.value.trim();
+  if (answer.length < 5) { alert('Please enter an answer with at least 5 characters.'); answerInput.focus(); return; }
+  try {
+    const user = await communityUser();
+    const { error } = await communityClient().from('answers').insert({
+      question_id: qId, user_id: user.id, answer
+    });
+    if (error) throw error;
+    answerInput.value = '';
+    await loadAnswers(qId);
+    alert('Your answer has been submitted successfully!');
+  } catch (error) {
+    console.error('Answer publishing failed:', error);
+    alert('Answer was not saved: ' + (error.message || 'Unknown error'));
   }
-
-  const current = getActiveStudent();
-  const newAnswer = {
-    id: 'ans-' + Date.now(),
-    question_id: qId,
-    user_id: current.id,
-    author_name: current.full_name || 'Student',
-    author_image: current.profile_image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=student',
-    answer: text,
-    created_at: new Date().toISOString()
-  };
-
-  // Try Supabase insert
-  if (window.supabaseClient && window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && current.id !== 'guest_user') {
-    try {
-      await window.supabaseClient.from('answers').insert({
-        question_id: qId,
-        user_id: current.id,
-        answer: text
-      });
-    } catch (e) {
-      console.warn('Supabase answer insert warning:', e);
-    }
-  }
-
-  // Persist locally
-  const localAnswers = JSON.parse(localStorage.getItem('uniskill_answers') || '[]');
-  localAnswers.push(newAnswer);
-  localStorage.setItem('uniskill_answers', JSON.stringify(localAnswers));
-
-  // Clear text
-  answerInput.value = '';
-
-  alert('Your answer has been submitted successfully!');
-  await loadAnswers(qId);
 }
 
 // ------------------------------------------------------------------------------

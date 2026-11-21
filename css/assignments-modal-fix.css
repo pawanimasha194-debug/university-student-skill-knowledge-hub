@@ -1,0 +1,41 @@
+/* Team Collaboration: isolate modal presentation from global styles. */
+#joinTeamModal.modal-overlay,
+#createTeamModal.modal-overlay {
+  display: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10050 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: 24px 12px !important;
+  overflow-y: auto !important;
+  background: rgba(9, 25, 29, .65) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+#joinTeamModal.modal-overlay.active,
+#createTeamModal.modal-overlay.active { display: flex !important; }
+#joinTeamModal .modal-content,
+#createTeamModal .modal-content {
+  position: relative !important;
+  display: block !important;
+  width: min(100%, 520px) !important;
+  max-height: calc(100dvh - 48px) !important;
+  overflow-y: auto !important;
+  margin: auto !important;
+  padding: 24px !important;
+  border-radius: 14px !important;
+  background: var(--card-bg, var(--surface, #fff)) !important;
+  color: var(--text-primary, #123038) !important;
+  box-shadow: 0 18px 65px rgba(0,0,0,.28) !important;
+  box-sizing: border-box !important;
+}
+#joinTeamModal .form-control,
+#createTeamModal .form-control { width: 100%; max-width: 100%; box-sizing: border-box; }
+#joinTeamModal .modal-close,
+#createTeamModal .modal-close { position: absolute; top: 10px; right: 12px; cursor: pointer; }
+@media (max-width: 520px) {
+  #joinTeamModal .modal-content, #createTeamModal .modal-content { padding: 18px !important; }
+  #createTeamModal form > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+}

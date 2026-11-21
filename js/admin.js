@@ -17,64 +17,8 @@
  * ==============================================================================
  */
 
-// ------------------------------------------------------------------------------
-// Admin Authentication (Simple, student-level university administrator)
-// ------------------------------------------------------------------------------
-function adminLogin(e) {
-  if (e) e.preventDefault();
-
-  const emailInput = document.getElementById('adminEmail');
-  const passInput = document.getElementById('adminPassword');
-  const errorAlert = document.getElementById('adminLoginAlert');
-
-  if (!emailInput || !passInput) return;
-
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passInput.value;
-
-  // University demo credentials or any admin domain email
-  if ((email === 'admin@uniskill.lk' || email === 'admin@university.ac.lk' || email.includes('admin')) && password.length >= 4) {
-    const adminSession = {
-      is_admin: true,
-      email: email,
-      full_name: 'System Administrator',
-      login_time: new Date().toISOString()
-    };
-    localStorage.setItem('uniskill_admin_session', JSON.stringify(adminSession));
-    window.location.href = 'admin-dashboard.html';
-  } else {
-    if (errorAlert) {
-      errorAlert.textContent = 'Invalid administrator credentials. (Hint: Use admin@uniskill.lk / pass: admin123)';
-      errorAlert.style.display = 'block';
-    } else {
-      alert('Invalid admin credentials. Please use admin@uniskill.lk');
-    }
-  }
-}
-
-function checkAdminAuth() {
-  const sessionStr = localStorage.getItem('uniskill_admin_session');
-  if (!sessionStr) {
-    window.location.href = 'admin-login.html';
-    return null;
-  }
-  try {
-    const session = JSON.parse(sessionStr);
-    if (!session || !session.is_admin) {
-      window.location.href = 'admin-login.html';
-      return null;
-    }
-    return session;
-  } catch (e) {
-    window.location.href = 'admin-login.html';
-    return null;
-  }
-}
-
-function adminLogout() {
-  localStorage.removeItem('uniskill_admin_session');
-  window.location.href = 'admin-login.html';
-}
+// Admin authentication is provided exclusively by js/faculty-admin.js.
+// No demo password or localStorage admin session is accepted.
 
 // ------------------------------------------------------------------------------
 // 1. loadStatistics()

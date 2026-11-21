@@ -212,35 +212,15 @@ async function loadArticles() {
         });
       }
     } catch (fetchErr) {
-      // Supabase failed – will fall back to local + sample data
-      console.warn('Articles: Supabase fetch failed, using local data.', fetchErr);
+      // Keep the real database as the only source of truth
+      console.error('Articles fetch failed:', fetchErr);
     }
   }
 
-  // Step 2: Merge with locally saved articles (from create-article.js)
-  var localArticles = JSON.parse(localStorage.getItem('uniskill_local_articles') || '[]');
+  try { await refreshArticleInteractions(liveArticles); } catch (e) { console.error("Article interaction loading failed:", e); }
 
-  // Step 3: Combine all sources: local first, then Supabase, then sample
-  // Use a Map to deduplicate by article id
-  var articleMap = new Map();
-
-  // Add samples first (lowest priority – overwritten by real data)
-  sampleArticles.forEach(function(art) {
-    articleMap.set(art.id, art);
-  });
-
-  // Add live Supabase articles
-  liveArticles.forEach(function(art) {
-    articleMap.set(art.id, art);
-  });
-
-  // Add local articles last (highest priority – newest user content)
-  localArticles.forEach(function(art) {
-    articleMap.set(art.id, art);
-  });
-
-  // Convert map values to an array
-  allArticles = Array.from(articleMap.values());
+  // Only live database records are displayed. No sample or browser-local fallback.
+  allArticles = liveArticles;
 
   // Sort by newest first by default
   allArticles.sort(function(a, b) {
@@ -297,7 +277,7 @@ function buildArticleFeedCard(article) {
 
   // Get likes for this article from localStorage (so likes persist across page loads)
   var likedSet = getLikedArticles(student.id || 'guest');
-  var isLiked = likedSet.has(article.id);
+  var isLiked = !!article.is_liked;
   var likeClass = isLiked ? 'like-btn liked' : 'like-btn';
   var likeCount = article.likes_count || 0;
 
@@ -372,83 +352,75 @@ function attachArticleLikeHandler(btn) {
   });
 }
 
+async function getArticleAuthUser() {
+  if (!window.supabaseClient) throw new Error('Supabase connection is unavailable.');
+  const { data, error } = await window.supabaseClient.auth.getUser();
+  if (error) throw error;
+  if (!data || !data.user) throw new Error('Please sign in to like articles.');
+  return data.user;
+}
+
+async function refreshArticleInteractions(articles) {
+  if (!window.supabaseClient || !articles.length) return;
+  const ids = articles.map(a => a.id);
+  const [likes, comments, auth] = await Promise.all([
+    window.supabaseClient.from('article_likes').select('article_id,user_id').in('article_id', ids),
+    window.supabaseClient.from('article_comments').select('article_id').in('article_id', ids),
+    window.supabaseClient.auth.getUser()
+  ]);
+  if (likes.error) throw likes.error;
+  if (comments.error) throw comments.error;
+  const userId = auth.data && auth.data.user ? auth.data.user.id : null;
+  articles.forEach(a => {
+    const articleLikes = likes.data.filter(l => l.article_id === a.id);
+    a.likes_count = articleLikes.length;
+    a.comments_count = comments.data.filter(c => c.article_id === a.id).length;
+    a.is_liked = !!userId && articleLikes.some(l => l.user_id === userId);
+  });
+}
+
 async function likeArticle(btn) {
-  var articleId = btn.getAttribute('data-article-id');
+  if (btn.disabled) return;
+  const articleId = btn.getAttribute('data-article-id');
   if (!articleId) return;
-
-  var student = getCurrentStudent();
-  var studentId = student.id || 'guest';
-
-  // Get current liked set from localStorage
-  var likedSet = getLikedArticles(studentId);
-  var countSpan = btn.querySelector('.like-count');
-  var currentCount = parseInt(btn.getAttribute('data-like-count') || '0', 10);
-
-  if (btn.classList.contains('liked')) {
-    // Currently liked – so unlike it
-    btn.classList.remove('liked');
-    likedSet.delete(articleId);
-    currentCount = Math.max(0, currentCount - 1);
-
-    // Try to delete from Supabase
-    if (window.supabaseClient && student.id && student.id !== 'guest_user') {
-      try {
-        await window.supabaseClient
-          .from('article_likes')
-          .delete()
-          .eq('article_id', articleId)
-          .eq('user_id', student.id);
-      } catch (e) {
-        // Fail silently – local state already updated
-      }
+  btn.disabled = true;
+  try {
+    const user = await getArticleAuthUser();
+    const { data: existing, error: lookupError } = await window.supabaseClient
+      .from('article_likes').select('id').eq('article_id', articleId).eq('user_id', user.id).maybeSingle();
+    if (lookupError) throw lookupError;
+    const result = existing
+      ? await window.supabaseClient.from('article_likes').delete().eq('article_id', articleId).eq('user_id', user.id)
+      : await window.supabaseClient.from('article_likes').insert({ article_id: articleId, user_id: user.id });
+    if (result.error) throw result.error;
+    const { count, error: countError } = await window.supabaseClient.from('article_likes')
+      .select('id', { count: 'exact', head: true }).eq('article_id', articleId);
+    if (countError) throw countError;
+    const liked = !existing;
+    btn.classList.toggle('liked', liked);
+    btn.setAttribute('data-like-count', String(count));
+    const span = btn.querySelector('.like-count');
+    if (span) span.textContent = count;
+    const stats = document.querySelector('.article-like-num-' + articleId);
+    if (stats) stats.textContent = count;
+    const detailDisplay = document.getElementById('detailLikeDisplay');
+    if (detailDisplay && btn.id === 'detailLikeBtn') detailDisplay.textContent = count + ' people liked this article';
+    if (typeof allArticles !== 'undefined') {
+      const article = allArticles.find(a => a.id === articleId);
+      if (article) { article.likes_count = count; article.is_liked = liked; }
     }
-  } else {
-    // Not liked yet – like it
-    btn.classList.add('liked');
-    likedSet.add(articleId);
-    currentCount = currentCount + 1;
-
-    // Try to insert into Supabase
-    if (window.supabaseClient && student.id && student.id !== 'guest_user') {
-      try {
-        await window.supabaseClient
-          .from('article_likes')
-          .insert({ article_id: articleId, user_id: student.id });
-      } catch (e) {
-        // Fail silently
-      }
+    if (typeof currentArticle !== 'undefined' && currentArticle && currentArticle.id === articleId) {
+      currentArticle.likes_count = count; currentArticle.is_liked = liked;
     }
-  }
-
-  // Update button and counter display
-  btn.setAttribute('data-like-count', currentCount);
-  if (countSpan) countSpan.textContent = currentCount;
-
-  // Update the stats row count too (the span with class article-like-num-{id})
-  var statsNum = document.querySelector('.article-like-num-' + articleId);
-  if (statsNum) statsNum.textContent = currentCount;
-
-  // Save liked set back to localStorage
-  saveLikedArticles(studentId, likedSet);
+  } catch (e) {
+    console.error('Article like failed:', e);
+    alert('Could not save your like: ' + e.message);
+  } finally { btn.disabled = false; }
 }
 
-// Get liked articles Set from localStorage
-function getLikedArticles(studentId) {
-  var key = 'uniskill_article_likes_' + studentId;
-  var stored = localStorage.getItem(key);
-  if (stored) {
-    try {
-      return new Set(JSON.parse(stored));
-    } catch (e) {}
-  }
-  return new Set();
-}
-
-// Save liked articles Set back to localStorage
-function saveLikedArticles(studentId, likedSet) {
-  var key = 'uniskill_article_likes_' + studentId;
-  localStorage.setItem(key, JSON.stringify(Array.from(likedSet)));
-}
+// Compatibility with other existing article pages.
+function getLikedArticles() { return new Set(); }
+function saveLikedArticles() { /* Likes are stored in Supabase, not localStorage. */ }
 
 // ------------------------------------------------------------------------------
 // searchArticles()

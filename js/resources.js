@@ -205,74 +205,22 @@ async function loadResources() {
   `;
 
   try {
-    let resourcesData = [];
-
-    // Attempt 1: Fetch from live Supabase Database
-    if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient) {
-      try {
-        const { data, error } = await window.supabaseClient
-          .from('resources')
-          .select(`
-            id,
-            user_id,
-            title,
-            description,
-            category_id,
-            file_url,
-            file_name,
-            file_size,
-            created_at,
-            categories ( category_name ),
-            profiles:user_id ( full_name, faculty, degree, profile_image )
-          `)
-          .order('created_at', { ascending: false });
-
-        if (!error && data && data.length > 0) {
-          resourcesData = data.map(item => {
-            const ext = getFileExtension(item.file_name);
-            return {
-              id: item.id,
-              user_id: item.user_id,
-              title: item.title,
-              description: item.description || '',
-              category_id: item.category_id,
-              category_name: item.categories?.category_name || 'General',
-              faculty: item.profiles?.faculty || 'University Student',
-              uploader_name: item.profiles?.full_name || 'Student Uploader',
-              uploader_image: item.profiles?.profile_image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(item.title)}`,
-              uploader_degree: item.profiles?.degree || 'Undergraduate',
-              file_url: item.file_url,
-              file_name: item.file_name,
-              file_size: item.file_size || 'Unknown size',
-              file_type: ext,
-              created_at: item.created_at
-            };
-          });
-        }
-      } catch (err) {
-        console.warn('Could not fetch from Supabase resources table:', err);
-      }
-    }
-
-    // Attempt 2: Check localStorage for any locally uploaded resources
-    const localUploads = JSON.parse(localStorage.getItem('uniskill_local_resources') || '[]');
-    
-    // Combine live/local resources with sample resources so the page is always rich
-    const combinedMap = new Map();
-    
-    // First insert live or local resources
-    [...resourcesData, ...localUploads].forEach(res => {
-      combinedMap.set(res.id, res);
-    });
-
-    // If still empty or for demonstration, add sample resources
-    defaultSampleResources.forEach(sample => {
-      if (!combinedMap.has(sample.id)) {
-        combinedMap.set(sample.id, sample);
-      }
-    });
-
-    allResources = Array.from(combinedMap.values());
+    const client = window.supabaseClient;
+    if (!client) throw new Error('Supabase client is not available.');
+    const { data, error } = await client.from('resources')
+      .select('id,user_id,title,description,category_id,file_url,file_name,file_size,created_at,categories(category_name),profiles:user_id(full_name,faculty,degree,profile_image)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    allResources = (data || []).map(item => ({
+      ...item,
+      category_name: item.categories?.category_name || 'General',
+      faculty: item.profiles?.faculty || 'University Student',
+      uploader_name: item.profiles?.full_name || 'Student Uploader',
+      uploader_image: item.profiles?.profile_image || '',
+      uploader_degree: item.profiles?.degree || 'Undergraduate',
+      file_type: getFileExtension(item.file_name),
+      file_size: item.file_size || 'Unknown size'
+    }));
 
     // Update count in UI
     if (totalCountEl) totalCountEl.textContent = allResources.length;
@@ -469,13 +417,13 @@ function renderResourceCardHTML(item) {
 
           <!-- Direct Download Button -->
           <a 
-            href="${item.file_url}" 
+            href="${escapeHTML(item.file_url)}" 
             download="${item.file_name}" 
             target="_blank" 
             class="btn btn-outline btn-sm btn-download-resource"
             data-id="${item.id}"
-            data-url="${item.file_url}"
-            data-name="${item.file_name}"
+            data-url="${escapeHTML(item.file_url)}"
+            data-name="${escapeHTML(item.file_name)}"
           >
             <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -495,86 +443,37 @@ function renderResourceCardHTML(item) {
  * ------------------------------------------------------------------------------
  */
 async function bookmarkResource(resourceId, btnElement) {
-  const currentStudent = getCurrentStudent();
-  const userId = currentStudent ? currentStudent.id : 'guest-student';
-
-  const isCurrentlyBookmarked = userBookmarks.has(resourceId);
-
-  try {
-    if (isCurrentlyBookmarked) {
-      // Remove bookmark
-      userBookmarks.delete(resourceId);
-
-      // Remove from live Supabase if connected
-      if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient && currentStudent) {
-        await window.supabaseClient
-          .from('bookmarks')
-          .delete()
-          .match({ user_id: userId, resource_id: resourceId });
-      }
-
-      showNotification('Resource removed from your saved list.', 'info');
-    } else {
-      // Add bookmark
-      userBookmarks.add(resourceId);
-
-      // Insert into live Supabase if connected
-      if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient && currentStudent) {
-        await window.supabaseClient
-          .from('bookmarks')
-          .insert([{ user_id: userId, resource_id: resourceId }]);
-      }
-
-      showNotification('Resource saved! You can view it under Saved Resources.', 'success');
-    }
-
-    // Save state to localStorage for offline resilience
-    saveUserBookmarksToStorage();
-
-    // Update UI button state
-    if (btnElement) {
-      const nowSaved = userBookmarks.has(resourceId);
-      btnElement.classList.toggle('bookmarked', nowSaved);
-      btnElement.querySelector('span').textContent = nowSaved ? 'Saved' : 'Save';
-      btnElement.querySelector('svg').setAttribute('fill', nowSaved ? 'currentColor' : 'none');
-    }
-
-  } catch (err) {
-    console.warn('Bookmark operation notice:', err.message);
+  const client = window.supabaseClient;
+  if (!client) return showNotification('Supabase connection unavailable.', 'error');
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError || !user) return showNotification('Please log in to save resources.', 'error');
+  const wasSaved = userBookmarks.has(resourceId);
+  const query = wasSaved
+    ? client.from('bookmarks').delete().eq('user_id', user.id).eq('resource_id', resourceId)
+    : client.from('bookmarks').insert({ user_id: user.id, resource_id: resourceId });
+  const { error } = await query;
+  if (error) return showNotification(`Bookmark failed: ${error.message}`, 'error');
+  if (wasSaved) userBookmarks.delete(resourceId);
+  else userBookmarks.add(resourceId);
+  if (btnElement) {
+    btnElement.classList.toggle('bookmarked', !wasSaved);
+    const label = btnElement.querySelector('span');
+    if (label) label.textContent = wasSaved ? 'Save' : 'Saved';
+    const svg = btnElement.querySelector('svg');
+    if (svg) svg.setAttribute('fill', wasSaved ? 'none' : 'currentColor');
   }
+  showNotification(wasSaved ? 'Bookmark removed.' : 'Resource saved.', 'success');
 }
 
-/**
- * Helper: Load bookmarks for the logged-in student
- */
 async function loadUserBookmarks() {
   userBookmarks.clear();
-  const currentStudent = getCurrentStudent();
-  const userId = currentStudent ? currentStudent.id : 'guest-student';
-
-  // Check Supabase if live
-  if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.isConfigured() && window.supabaseClient && currentStudent) {
-    try {
-      const { data } = await window.supabaseClient
-        .from('bookmarks')
-        .select('resource_id')
-        .eq('user_id', userId);
-
-      if (data) {
-        data.forEach(b => userBookmarks.add(b.resource_id));
-      }
-    } catch (e) {}
-  }
-
-  // Also check localStorage
-  const localBm = JSON.parse(localStorage.getItem(`uniskill_bookmarks_${userId}`) || '[]');
-  localBm.forEach(id => userBookmarks.add(id));
-}
-
-function saveUserBookmarksToStorage() {
-  const currentStudent = getCurrentStudent();
-  const userId = currentStudent ? currentStudent.id : 'guest-student';
-  localStorage.setItem(`uniskill_bookmarks_${userId}`, JSON.stringify(Array.from(userBookmarks)));
+  const client = window.supabaseClient;
+  if (!client) return;
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError || !user) return;
+  const { data, error } = await client.from('bookmarks').select('resource_id').eq('user_id', user.id);
+  if (error) { console.error('Bookmark loading failed:', error); return; }
+  (data || []).forEach(row => userBookmarks.add(row.resource_id));
 }
 
 /**

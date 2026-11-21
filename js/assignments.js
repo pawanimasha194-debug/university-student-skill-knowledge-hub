@@ -1,251 +1,141 @@
-/**
- * ==============================================================================
- * UniSkill Hub - Assignment Collaboration & Team Finder
- * File: js/assignments.js
- * Modules: Feature 10
- * ==============================================================================
- */
-
+/* UniSkill Hub — Team Collaboration Supabase backend */
 let allAssignmentTeams = [];
 let currentCourseFilter = 'all';
+let currentUser = null;
+let currentRequests = [];
+const db = () => window.supabaseClient || window.supabaseDB || window.sb;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+const value = id => ($(id)?.value || '').trim();
 
-document.addEventListener('DOMContentLoaded', () => {
-  initAssignmentsPage();
-
-  const searchInput = document.getElementById('assignmentSearchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      filterAssignmentTeams(e.target.value);
-    });
+window.addEventListener('DOMContentLoaded', async () => {
+  $('assignmentSearchInput')?.addEventListener('input', () => filterAssignmentTeams());
+  const deadline = $('teamDeadline');
+  if (deadline) {
+    const date = new Date(); date.setDate(date.getDate()+7);
+    deadline.value = date.toISOString().slice(0,10);
+    deadline.min = new Date().toISOString().slice(0,10);
   }
-
-  // Set default deadline in modal to 7 days ahead
-  const deadlineInput = document.getElementById('teamDeadline');
-  if (deadlineInput) {
-    const nextWeek = new Date();
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    deadlineInput.value = nextWeek.toISOString().split('T')[0];
-    deadlineInput.min = new Date().toISOString().split('T')[0];
-  }
+  await initAssignmentsPage();
 });
 
-function initAssignmentsPage() {
-  allAssignmentTeams = window.AcademicCore.getStoredAssignmentTeams();
-  renderAssignmentTeams(allAssignmentTeams);
+async function initAssignmentsPage() {
+  const client = db();
+  if (!client) return showAlert('Supabase configuration is not loaded.', 'danger');
+  // Restore the existing Supabase session before checking authorization.
+  const {data:sessionData,error:sessionError} = await client.auth.getSession();
+  if (sessionError) return showAlert('Unable to restore login session: '+sessionError.message, 'danger');
+  if (!sessionData?.session) {
+    showAlert('Please log in to browse and create teams. Open this page through Live Server (http://127.0.0.1:5500), not a file:/// URL.', 'danger');
+    return;
+  }
+  const {data:userData,error} = await client.auth.getUser();
+  if (error || !userData?.user) return showAlert('Login session expired. Please log in again.', 'danger');
+  currentUser = userData.user;
+  await loadTeams();
+}
+
+async function loadTeams() {
+  const client = db();
+  const [teamsResult,summaryResult,requestsResult] = await Promise.all([
+    client.from('assignment_teams').select('*').order('created_at',{ascending:false}),
+    client.rpc('assignment_team_summary'),
+    client.from('assignment_team_requests').select('*').order('created_at',{ascending:false})
+  ]);
+  if (teamsResult.error) return showAlert('Unable to load teams: '+teamsResult.error.message,'danger');
+  if (summaryResult.error) return showAlert('Unable to load team members: '+summaryResult.error.message,'danger');
+  if (requestsResult.error) return showAlert('Unable to load requests: '+requestsResult.error.message,'danger');
+  currentRequests = requestsResult.data || [];
+  const summaries = new Map((summaryResult.data||[]).map(x=>[x.team_id,x]));
+  allAssignmentTeams = (teamsResult.data||[]).map(t=>{
+    const summary = summaries.get(t.id) || {};
+    const count = Number(summary.approved_count||0);
+    return {...t, members_joined:count+1, members_list:['Team owner',...(summary.member_names||[])],open_spots:Math.max(0,t.members_needed-count),status:count>=t.members_needed?'Full':'Open'};
+  });
+  filterAssignmentTeams();
 }
 
 function filterByCourse(code) {
   currentCourseFilter = code;
-
-  document.querySelectorAll('.course-filter-btn').forEach(btn => {
-    if (code === 'all' && btn.textContent.includes('All')) {
-      btn.className = 'btn btn-sm btn-primary course-filter-btn';
-    } else if (btn.textContent.includes(code) && code !== 'all') {
-      btn.className = 'btn btn-sm btn-primary course-filter-btn';
-    } else {
-      btn.className = 'btn btn-sm btn-outline course-filter-btn';
-    }
+  document.querySelectorAll('.course-filter-btn').forEach(b=>{
+    const active = code==='all' ? b.textContent.includes('All') : b.textContent.includes(code);
+    b.classList.toggle('btn-primary',active);
+    b.classList.toggle('btn-outline',!active);
   });
-
   filterAssignmentTeams();
 }
-
-function filterAssignmentTeams(searchQuery = '') {
-  const query = (searchQuery || document.getElementById('assignmentSearchInput')?.value || '').toLowerCase().trim();
-
-  const filtered = allAssignmentTeams.filter(team => {
-    if (currentCourseFilter !== 'all' && team.course_code !== currentCourseFilter) {
-      return false;
-    }
-    if (query) {
-      const matchCourse = team.course_code.toLowerCase().includes(query);
-      const matchTitle = team.title.toLowerCase().includes(query);
-      const matchRoles = team.roles_needed.some(r => r.toLowerCase().includes(query));
-      const matchDesc = team.description.toLowerCase().includes(query);
-      if (!matchCourse && !matchTitle && !matchRoles && !matchDesc) return false;
-    }
-    return true;
-  });
-
-  renderAssignmentTeams(filtered);
+function filterAssignmentTeams() {
+  const query = value('assignmentSearchInput').toLowerCase();
+  renderAssignmentTeams(allAssignmentTeams.filter(t=>
+    (currentCourseFilter==='all'||t.course_code===currentCourseFilter) &&
+    [t.title,t.course_code,t.course_name,t.description,...(t.roles_needed||[])].join(' ').toLowerCase().includes(query)
+  ));
 }
-
 function renderAssignmentTeams(teams) {
-  const container = document.getElementById('assignmentTeamsContainer');
-  if (!container) return;
-
-  if (teams.length === 0) {
-    container.innerHTML = `
-      <div class="card" style="padding: 30px; text-align: center; color: var(--text-muted);">
-        <p style="font-size: 15px; margin-bottom: 8px;">No assignment requests found for this filter.</p>
-        <button class="btn btn-primary btn-sm" onclick="openCreateTeamModal()">Post the First Request!</button>
-      </div>
-    `;
+  const container = $('assignmentTeamsContainer'); if (!container) return;
+  if (!teams.length) {
+    container.innerHTML='<div class="card" style="padding:25px;text-align:center">No teams found. <button class="btn btn-primary btn-sm" onclick="openCreateTeamModal()">Post a Team Request</button></div>';
     return;
   }
-
-  container.innerHTML = teams.map(team => {
-    const rolesHTML = (team.roles_needed || []).map(r => 
-      `<span class="role-pill">🔍 ${escapeHtml(r)}</span>`
-    ).join(' ');
-
-    const membersHTML = (team.members_list || []).map(m => 
-      `<span style="display: inline-block; font-size: 11px; background: #f3f4f6; color: #374151; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">👤 ${escapeHtml(m)}</span>`
-    ).join(' ');
-
-    const isFull = team.status === 'Full';
-
-    return `
-      <div class="assignment-card">
-        <div class="assignment-card-header">
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span class="course-badge">${escapeHtml(team.course_code)}</span>
-              <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 500;">
-                ${escapeHtml(team.course_name)} • ${escapeHtml(team.faculty)}
-              </span>
-            </div>
-            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
-              ${escapeHtml(team.title)}
-            </h3>
-          </div>
-
-          <div>
-            <span style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 12px; background: ${isFull ? '#fee2e2' : '#def7ec'}; color: ${isFull ? '#991b1b' : '#03543f'};">
-              ${isFull ? '● Team Full' : '● ' + team.members_needed + ' Open Spots'}
-            </span>
-          </div>
-        </div>
-
-        <p style="font-size: 13px; color: #4b5563; line-height: 1.5; margin: 8px 0;">
-          ${escapeHtml(team.description)}
-        </p>
-
-        <div style="margin-bottom: 10px;">
-          <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">
-            LOOKING FOR SKILLS:
-          </div>
-          <div class="assignment-roles-wrap">
-            ${rolesHTML}
-          </div>
-        </div>
-
-        <div style="margin-bottom: 12px; font-size: 12px;">
-          <strong style="color: var(--text-muted);">Current Team (${team.members_joined} members):</strong>
-          <div style="margin-top: 4px;">${membersHTML}</div>
-        </div>
-
-        <div class="assignment-meta-footer">
-          <div>
-            ⏳ Submission Deadline: <strong>${team.deadline}</strong>
-          </div>
-
-          <div>
-            ${isFull 
-              ? `<button class="btn btn-secondary btn-sm" disabled>Team Closed</button>`
-              : `<button class="btn btn-primary btn-sm" onclick="openJoinTeamModal('${team.id}')">🤝 Join Team</button>`
-            }
-          </div>
-        </div>
-      </div>
-    `;
+  container.innerHTML=teams.map(t=>{
+    const mine=t.owner_id===currentUser?.id;
+    const application=currentRequests.find(r=>r.team_id===t.id&&r.applicant_id===currentUser?.id);
+    const pending=currentRequests.filter(r=>r.team_id===t.id&&r.status==='pending');
+    const buttons=mine?`<button class="btn btn-outline btn-sm" onclick="editTeam('${t.id}')">Edit</button> <button class="btn btn-outline btn-sm" onclick="deleteTeam('${t.id}')">Delete</button>`:
+      application?`<span class="course-badge">Your request: ${esc(application.status)}</span>`:
+      t.status==='Full'?'<button class="btn btn-secondary btn-sm" disabled>Team Full</button>':`<button class="btn btn-primary btn-sm" onclick="openJoinTeamModal('${t.id}')">🤝 Join Team</button>`;
+    return `<div class="assignment-card"><div class="assignment-card-header"><div><span class="course-badge">${esc(t.course_code)}</span> <small>${esc(t.course_name)} · ${esc(t.faculty||'University')}</small><h3>${esc(t.title)}</h3></div><span class="course-badge">${t.open_spots} open spots</span></div>
+    <p>${esc(t.description)}</p><div class="assignment-roles-wrap">${(t.roles_needed||[]).map(r=>`<span class="role-pill">🔍 ${esc(r)}</span>`).join(' ')}</div>
+    <p><strong>Team (${t.members_joined}):</strong> ${(t.members_list||[]).map(n=>`<span class="course-badge">${esc(n)}</span>`).join(' ')}</p>
+    <div class="assignment-meta-footer"><span>⏳ Deadline: ${esc(t.deadline)}</span><div>${buttons}</div></div>
+    ${mine&&pending.length?`<div style="padding-top:12px"><strong>Pending requests</strong>${pending.map(r=>`<div style="margin:8px 0">${esc(r.requested_role)}: ${esc(r.note)} <button class="btn btn-sm btn-primary" onclick="reviewRequest('${r.id}',true)">Approve</button> <button class="btn btn-sm btn-outline" onclick="reviewRequest('${r.id}',false)">Reject</button></div>`).join('')}</div>`:''}</div>`;
   }).join('');
 }
-
-function openJoinTeamModal(teamId) {
-  const team = allAssignmentTeams.find(t => t.id === teamId);
-  if (!team) return;
-
-  document.getElementById('joinTeamId').value = team.id;
-  document.getElementById('joinModalTeamTitle').innerHTML = `
-    Applying for <strong>${escapeHtml(team.title)}</strong> (${escapeHtml(team.course_code)}).
-  `;
-
-  const select = document.getElementById('joinRoleSelect');
-  select.innerHTML = (team.roles_needed || ['General Contributor']).map(r => 
-    `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`
-  ).join('');
-
+function openJoinTeamModal(id) {
+  const t=allAssignmentTeams.find(x=>x.id===id); if(!t)return;
+  $('joinTeamId').value=id;
+  $('joinModalTeamTitle').textContent=`Applying for ${t.title} (${t.course_code})`;
+  $('joinRoleSelect').innerHTML=(t.roles_needed.length?t.roles_needed:['General Contributor']).map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
   openModal('joinTeamModal');
 }
-
-function handleJoinTeamSubmit(e) {
+async function handleJoinTeamSubmit(e) {
   e.preventDefault();
-  const teamId = document.getElementById('joinTeamId').value;
-  const role = document.getElementById('joinRoleSelect').value;
-  const note = document.getElementById('joinNoteInput').value;
-
-  const result = window.AcademicCore.applyToJoinTeam(teamId, role, note);
-
-  if (result.success) {
-    closeModal('joinTeamModal');
-    showAlert(result.message, 'success');
-    allAssignmentTeams = window.AcademicCore.getStoredAssignmentTeams();
-    renderAssignmentTeams(allAssignmentTeams);
-  } else {
-    alert(result.message);
-  }
+  if (!currentUser) return showAlert('Log in first','danger');
+  const {error}=await db().from('assignment_team_requests').insert({team_id:value('joinTeamId'),applicant_id:currentUser.id,requested_role:value('joinRoleSelect'),note:value('joinNoteInput')});
+  if(error)return showAlert('Join request failed: '+error.message,'danger');
+  closeModal('joinTeamModal');$('joinTeamForm').reset();showAlert('Join request submitted.');await loadTeams();
 }
-
-function openCreateTeamModal() {
-  openModal('createTeamModal');
-}
-
-function handleCreateTeamSubmit(e) {
+function openCreateTeamModal(){openModal('createTeamModal');}
+async function handleCreateTeamSubmit(e) {
   e.preventDefault();
-
-  const courseCode = document.getElementById('teamCourseCode').value;
-  const courseName = document.getElementById('teamCourseName').value;
-  const title = document.getElementById('teamProjectTitle').value;
-  const rolesNeeded = document.getElementById('teamRolesNeeded').value;
-  const membersNeeded = document.getElementById('teamMembersNeeded').value;
-  const deadline = document.getElementById('teamDeadline').value;
-  const description = document.getElementById('teamDescription').value;
-
-  const result = window.AcademicCore.postAssignmentTeamRequest({
-    courseCode,
-    courseName,
-    title,
-    description,
-    rolesNeeded,
-    membersNeeded,
-    deadline
-  });
-
-  if (result.success) {
-    closeModal('createTeamModal');
-    showAlert(result.message, 'success');
-    document.getElementById('createTeamForm').reset();
-    allAssignmentTeams = window.AcademicCore.getStoredAssignmentTeams();
-    renderAssignmentTeams(allAssignmentTeams);
-  } else {
-    alert(result.message);
-  }
+  if (!currentUser) return showAlert('Log in first','danger');
+  const payload={owner_id:currentUser.id,course_code:value('teamCourseCode'),course_name:value('teamCourseName'),title:value('teamProjectTitle'),roles_needed:value('teamRolesNeeded').split(',').map(s=>s.trim()).filter(Boolean),members_needed:Number(value('teamMembersNeeded')),deadline:value('teamDeadline'),description:value('teamDescription')};
+  if(!payload.roles_needed.length)return showAlert('Enter at least one required skill or role.','danger');
+  const {error}=await db().from('assignment_teams').insert(payload);
+  if(error)return showAlert('Team creation failed: '+error.message,'danger');
+  closeModal('createTeamModal');$('createTeamForm').reset();showAlert('Team created successfully.');await loadTeams();
 }
-
-function openModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
+async function reviewRequest(id,approve){
+  const {error}=await db().rpc('review_assignment_team_request',{p_request_id:id,p_approve:approve});
+  if(error)return showAlert('Review failed: '+error.message,'danger');
+  showAlert(approve?'Request approved.':'Request rejected.');await loadTeams();
 }
-
-function closeModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('active');
+async function editTeam(id){
+  const t=allAssignmentTeams.find(x=>x.id===id&&x.owner_id===currentUser?.id);if(!t)return;
+  const title=prompt('Team title:',t.title);if(title===null)return;
+  const description=prompt('Description:',t.description);if(description===null)return;
+  if(!title.trim()||!description.trim())return showAlert('Title and description are required.','danger');
+  const {error}=await db().from('assignment_teams').update({title:title.trim(),description:description.trim()}).eq('id',id).eq('owner_id',currentUser.id);
+  if(error)return showAlert('Update failed: '+error.message,'danger');showAlert('Team updated.');await loadTeams();
 }
-
-function showAlert(msg, type = 'success') {
-  const alertBox = document.getElementById('assignmentAlert');
-  if (alertBox) {
-    alertBox.textContent = msg;
-    alertBox.className = `alert alert-${type}`;
-    alertBox.style.display = 'block';
-    setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
-  }
+async function deleteTeam(id){
+  if(!confirm('Delete this team and its requests permanently?'))return;
+  const {error}=await db().from('assignment_teams').delete().eq('id',id).eq('owner_id',currentUser.id);
+  if(error)return showAlert('Delete failed: '+error.message,'danger');showAlert('Team deleted.');await loadTeams();
 }
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>"']/g, m => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[m]));
+function openModal(id){$(id)?.classList.add('active');}
+function closeModal(id){$(id)?.classList.remove('active');}
+function showAlert(msg,type='success'){
+  const el=$('assignmentAlert');if(!el){alert(msg);return;}
+  el.textContent=msg;el.className='alert alert-'+(type==='danger'?'danger':'success');el.style.display='block';
 }
